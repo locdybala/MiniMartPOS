@@ -12,6 +12,7 @@ use App\Http\Controllers\admin\ImportOrderController;
 use App\Http\Controllers\admin\InventoryController;
 use App\Http\Controllers\admin\OrderController;
 use App\Http\Controllers\admin\CustomerGroupController;
+use App\Http\Controllers\admin\CustomerController;
 
 
 /*
@@ -81,6 +82,8 @@ Route::prefix('admin')->group(function () {
         Route::get('/orders/create', [OrderController::class, 'create'])->name('orders.create');
         Route::post('/orders', [OrderController::class, 'store'])->name('orders.store');
         Route::resource('customer_groups', CustomerGroupController::class);
+        Route::resource('customers', CustomerController::class);
+        Route::resource('orders', OrderController::class);
     });
 });
 

@@ -1,67 +1,91 @@
 @extends('admin.layouts.admin-layout')
-@section('content')
-    <div class="container">
-        <h2>Tạo đơn hàng mới</h2>
-        <form action="{{ route('orders.store') }}" method="POST">
-            @csrf
-            <div class="mb-3">
-                <label for="customer_id" class="form-label">Chọn khách hàng</label>
-                <select name="customer_id" class="form-control" required>
-                    @foreach(\App\Models\Customer::all() as $customer)
-                        <option value="{{ $customer->id }}">{{ $customer->name }}</option>
-                    @endforeach
-                </select>
-            </div>
 
-            <div id="product-list">
-                <div class="product-item mb-3">
-                    <label class="form-label">Sản phẩm</label>
-                    <select name="products[0][product_id]" class="form-control">
-                        @foreach(\App\Models\Product::all() as $product)
-                            <option value="{{ $product->id }}" data-price="{{ $product->price }}">
-                                {{ $product->name }} - {{ number_format($product->price, 0, ',', '.') }} VNĐ
-                            </option>
-                        @endforeach
-                    </select>
-                    <input type="number" name="products[0][quantity]" class="form-control mt-2" placeholder="Số lượng" min="1" required>
-                    <input type="hidden" name="products[0][price]" class="product-price">
+@section('content')
+    <div class="container-fluid">
+        <div class="d-flex align-items-center justify-content-between bg-primary p-3 text-white">
+            <a href="{{ route('orders.index') }}" class="btn btn-light">⬅ Quay lại</a>
+            <h5 class="mb-0">Đơn {{ session('order_id', 1) }}</h5>
+            <button class="btn btn-light" onclick="newOrder()">➕</button>
+        </div>
+
+        <div class="row mt-3">
+            <!-- Danh sách sản phẩm -->
+            <div class="col-md-6">
+                <input type="text" class="form-control mb-3" placeholder="🔍 Tìm sản phẩm vào đơn hàng" id="searchProduct">
+                <div class="product-list border p-3" style="max-height: 500px; overflow-y: auto;">
+                    @foreach($products as $product)
+                        <div class="d-flex justify-content-between align-items-center border-bottom py-2">
+                            <div>
+                                <img src="{{ $product->image }}" alt="" width="40" class="me-2">
+                                <strong>{{ $product->name }}</strong> <br>
+                                <small class="text-muted">Tồn: {{ $product->stock }}</small>
+                            </div>
+                            <button class="btn btn-sm btn-primary" onclick="addToOrder({{ $product->id }}, '{{ $product->name }}', {{ $product->price }})">➕</button>
+                        </div>
+                    @endforeach
                 </div>
             </div>
 
-            <button type="button" id="add-product" class="btn btn-secondary">Thêm sản phẩm</button>
-            <button type="submit" class="btn btn-primary">Tạo đơn hàng</button>
-        </form>
+            <!-- Đơn hàng -->
+            <div class="col-md-6">
+                <button class="btn btn-outline-primary w-100 mb-2" onclick="addCustomer()">Thêm khách hàng vào đơn</button>
+                <div class="order-box border p-3" style="min-height: 300px;">
+                    <p class="text-center text-muted">🛒 Đơn hàng của bạn chưa có sản phẩm nào</p>
+                    <ul class="list-group" id="orderList"></ul>
+                </div>
+                <button class="btn btn-success w-100 mt-3" onclick="checkout()">✅ Thanh toán</button>
+            </div>
+        </div>
     </div>
 
-@endsection
-@section('js')
     <script>
-        let productIndex = 1;
+        let orderItems = [];
 
-        document.getElementById('add-product').addEventListener('click', function() {
-            let productList = document.getElementById('product-list');
-            let newProduct = document.querySelector('.product-item').cloneNode(true);
+        function addToOrder(id, name, price) {
+            let item = orderItems.find(i => i.id === id);
+            if (item) {
+                item.quantity++;
+            } else {
+                orderItems.push({ id, name, price, quantity: 1 });
+            }
+            renderOrder();
+        }
 
-            newProduct.querySelectorAll('select, input').forEach(input => {
-                input.name = input.name.replace(/\d+/, productIndex);
+        function renderOrder() {
+            let orderList = document.getElementById('orderList');
+            orderList.innerHTML = "";
+            let total = 0;
+
+            orderItems.forEach((item, index) => {
+                total += item.price * item.quantity;
+                orderList.innerHTML += `
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    ${item.name} (x${item.quantity})
+                    <button class="btn btn-sm btn-danger" onclick="removeItem(${index})">❌</button>
+                </li>
+            `;
             });
 
-            // Cập nhật giá sản phẩm khi chọn
-            newProduct.querySelector('select').addEventListener('change', function() {
-                let price = this.options[this.selectedIndex].getAttribute('data-price');
-                newProduct.querySelector('.product-price').value = price;
-            });
+            if (orderItems.length > 0) {
+                orderList.innerHTML += `<li class="list-group-item text-end"><strong>Tổng tiền: ${total.toLocaleString()} VNĐ</strong></li>`;
+            } else {
+                orderList.innerHTML = `<p class="text-center text-muted">🛒 Đơn hàng của bạn chưa có sản phẩm nào</p>`;
+            }
+        }
 
-            productList.appendChild(newProduct);
-            productIndex++;
-        });
+        function removeItem(index) {
+            orderItems.splice(index, 1);
+            renderOrder();
+        }
 
-        // Cập nhật giá ngay khi load trang
-        document.querySelectorAll('.product-item select').forEach(select => {
-            select.addEventListener('change', function() {
-                let price = this.options[this.selectedIndex].getAttribute('data-price');
-                this.closest('.product-item').querySelector('.product-price').value = price;
-            });
-        });
+        function checkout() {
+            alert("Tiến hành thanh toán!");
+        }
+
+        function newOrder() {
+            orderItems = [];
+            renderOrder();
+        }
     </script>
+
 @endsection

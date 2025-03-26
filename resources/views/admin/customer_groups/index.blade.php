@@ -78,12 +78,58 @@
                                         <td> {{$i}}</td>
                                         <td>{{$group->name}}</td>
                                         <td>
-                                            <button type="button" class="btn btn-link btn-primary editGroupBtn" data-id="{{$group->id}}" data-name="{{$group->name}}" data-bs-toggle="modal" data-bs-target="#editGroupModal">
-                                                <i class="fa fa-edit"></i>
-                                            </button>
-                                            <button type="button" class="btn btn-link btn-danger deleteGroup" data-id="{{$group->id}}">
-                                                <i class="fa fa-times"></i>
-                                            </button>
+                                            <div class="form-button-action">
+                                                <button type="button" class="btn btn-link btn-primary editGroupBtn"
+                                                        data-id="{{$group->id}}" data-name="{{$group->name}}"
+                                                        data-bs-toggle="modal" data-bs-target="#editGroupModal">
+                                                    <i class="fa fa-edit"></i>
+                                                </button>
+                                                <!-- Modal Sửa -->
+                                                <div class="modal fade" id="editGroupModal" tabindex="-1" role="dialog" aria-hidden="true">
+                                                    <div class="modal-dialog" role="document">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header border-0">
+                                                                <h5 class="modal-title">
+                                                                    <span class="fw-mediumbold">Chỉnh sửa</span>
+                                                                    <span class="fw-light"> Nhóm khách hàng </span>
+                                                                </h5>
+                                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                <form id="editGroupCustomerForm">
+                                                                    @csrf
+                                                                    <input type="hidden" id="editGroupCustomerId">
+                                                                    <div class="row">
+                                                                        <div class="col-sm-12">
+                                                                            <div class="form-group form-group-default">
+                                                                                <label>Tên nhóm khách hàng</label>
+                                                                                <input id="editNameGroupCustomer" name="name" type="text" class="form-control" required>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-md-12">
+                                                                            <div class="form-group form-group-default">
+                                                                                <label>Trạng thái</label>
+                                                                                <div class="form-check form-switch">
+                                                                                    <input class="form-check-input" type="checkbox" id="editStatusGroupCustomer">
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="modal-footer border-0">
+                                                                        <button type="button" id="updateGroupCustomer" class="btn btn-primary">Cập nhật</button>
+                                                                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Đóng</button>
+                                                                    </div>
+                                                                </form>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <button type="button" class="btn btn-link btn-danger deleteGroup"
+                                                        data-id="{{$group->id}}">
+                                                    <i class="fa fa-times"></i>
+                                                </button>
+                                            </div>
                                         </td>
                                     </tr>
                                 @endforeach
@@ -99,9 +145,9 @@
 @section('js')
     <script>
         $(document).ready(function () {
+            // Thêm nhóm khách hàng
             $("#addGroup").click(function (e) {
-                e.preventDefault(); // Ngăn chặn form submit mặc định
-
+                e.preventDefault();
                 let name = $("#nameGroup").val();
                 let status = $("#statusGroup").is(":checked") ? 1 : 0;
 
@@ -116,164 +162,103 @@
                     success: function (response) {
                         if (response.success) {
                             $("#addGroupForm").modal("hide");
-                            $.notify({
-                                icon: "icon-bell",
-                                title: 'Thông báo',
-                                message: response.message
-                            }, {
-                                type: 'success',
-                                placement: {
-                                    from: "top",
-                                    align: "right",
-                                },
-                                time: 1000
-                            });
-                            setTimeout(function () {
-                                location.reload();
-                            }, 2000);
+                            notifySuccess(response.message);
+                            setTimeout(function () { location.reload(); }, 2000);
                         }
                     },
-                    error: function (xhr) {
-                        let errors = xhr.responseJSON.errors;
-                        $.notify({
-                            icon: "icon-bell",
-                            title: 'Thông báo',
-                            message: errors[Object.keys(errors)[0]][0]
-                        }, {
-                            type: 'warning',
-                            placement: {
-                                from: "top",
-                                align: "right",
-                            },
-                            time: 1000
-                        });
-                    }
+                    error: handleAjaxError
                 });
             });
-        });
-        $(document).on("click", ".editCategoryBtn", function () {
-            let id = $(this).data("id");
-            let name = $(this).data("name");
-            let description = $(this).data("description");
-            let status = $(this).data("status");
 
-            // Gán giá trị vào các ô input trong modal
-            $("#editgroupId").val(id);
-            $("#editNameCategory").val(name);
-            $("#editDescription").val(description);
-            $("#editStatusCategory").prop("checked", status == 1);
+            // Sửa nhóm khách hàng
+            $(document).on("click", ".editGroupBtn", function () {
+                let id = $(this).data("id");
+                let name = $(this).data("name");
+                let status = $(this).data("status");
 
-            // Mở modal (trong trường hợp Bootstrap chưa tự mở)
-            $("#editCategoryModal").modal("show");
-        });
+                // Gán dữ liệu vào modal
+                $("#editGroupCustomerId").val(id);
+                $("#editNameGroupCustomer").val(name);
+                $("#editStatusGroupCustomer").prop("checked", status == 1);
 
-        $(document).on("click", "#updateCategory", function (e) {
-            e.preventDefault(); // Ngăn form submit mặc định
+                // Hiển thị modal chỉnh sửa
+                $("#editGroupModal").modal("show");
+            });
 
-            let id = $("#editgroupId").val();
-            let name = $("#editNameCategory").val();
-            let description = $("#editDescription").val();
-            let status = $("#editStatusCategory").prop("checked") ? 1 : 0;
+            $(document).on("click", "#updateGroupCustomer", function (e) {
+                e.preventDefault();
 
-            $.ajax({
-                url: "{{ route('categories.update') }}",
-                type: "POST",
-                data: {
-                    _token: $("input[name=_token]").val(),
-                    id: id,
-                    name: name,
-                    description: description,
-                    status: status
-                },
-                success: function (response) {
-                    if (response.status === "success") {
-                        $("#editCategoryModal").modal("hide");
-                        $.notify({
-                            icon: "icon-bell",
-                            title: 'Thông báo',
-                            message: response.message
-                        }, {
-                            type: 'success',
-                            placement: {
-                                from: "top",
-                                align: "right",
-                            },
-                            time: 1000
-                        });
-                        setTimeout(function () {
-                            location.reload();
-                        }, 2000);
-                    } else {
-                        $.notify({
-                            icon: "icon-bell",
-                            title: 'Thông báo',
-                            message: response.message
-                        }, {
-                            type: 'danger',
-                            placement: {
-                                from: "top",
-                                align: "right",
-                            },
-                            time: 1000
-                        });
-                    }
-                },
-                error: function (error) {
-                    console.log(error);
-                    $.notify({
-                        icon: "icon-bell",
-                        title: 'Thông báo',
-                        message: error.message
-                    }, {
-                        type: 'warning',
-                        placement: {
-                            from: "top",
-                            align: "right",
+                let id = $("#editGroupCustomerId").val();
+                let name = $("#editNameGroupCustomer").val();
+                let status = $("#editStatusGroupCustomer").is(":checked") ? 1 : 0;
+
+                $.ajax({
+                    url: "/admin/customer_groups/" + id, // Đặt đúng URL API
+                    type: "PUT", // Sử dụng PUT theo chuẩn RESTful
+                    data: {
+                        id: id,
+                        name: name,
+                        status: status,
+                        _token: "{{ csrf_token() }}"
+                    },
+                    success: function (response) {
+                        if (response.success) {
+                            $("#editGroupModal").modal("hide");
+                            notifySuccess(response.message);
+                            setTimeout(function () {
+                                location.reload();
+                            }, 1500);
+                        }
+                    },
+                    error: handleAjaxError
+                });
+            });
+
+            // Xóa nhóm khách hàng
+            $(document).on("click", ".deleteGroup", function (e) {
+                e.preventDefault();
+                let groupId = $(this).data("id");
+
+                if (confirm("Bạn có chắc muốn xóa nhóm này không?")) {
+                    $.ajax({
+                        url: "/admin/customer_groups/" + groupId,
+                        type: "DELETE",
+                        data: { _token: "{{ csrf_token() }}" },
+                        success: function (response) {
+                            notifySuccess(response.message);
+                            setTimeout(function () { location.reload(); }, 2000);
                         },
-                        time: 1000
+                        error: handleAjaxError
                     });
                 }
             });
-        });
 
-        //Xoá
-        $(document).on("click", ".deleteGroup", function (e) {
-            e.preventDefault();
 
-            let groupId = $(this).data("id");
+            // Hàm thông báo thành công
+            function notifySuccess(message) {
+                debugger
+                $.notify({
+                    icon: "icon-bell",
+                    title: 'Thông báo',
+                    message: message
+                }, {
+                    type: 'success',
+                    placement: { from: "top", align: "right" },
+                    time: 1000
+                });
+            }
 
-            // Hiển thị popup xác nhận
-            if (confirm("Bạn có chắc muốn xóa nhóm này không?")) {
-                $.ajax({
-                    url: "/admin/customer_groups/delete/" + groupId,
-                    type: "DELETE",
-                    data: {
-                        _token: $("input[name=_token]").val(),
-                    },
-                    success: function (response) {
-                        $.notify({
-                            icon: "icon-bell",
-                            title: 'Thông báo',
-                            message: response.message
-                        }, {
-                            type: response.status === "success" ? 'success' : 'danger',
-                            placement: {
-                                from: "top",
-                                align: "right",
-                            },
-                            time: 1000
-                        });
-
-                        if (response.status === "success") {
-                            setTimeout(function () {
-                                location.reload();
-                            }, 2000);
-                        }
-                    },
-                    error: function (error) {
-                        console.log(error);
-                        alert("Có lỗi xảy ra, vui lòng thử lại!");
-                    }
+            // Hàm xử lý lỗi Ajax
+            function handleAjaxError(xhr) {
+                let errors = xhr.responseJSON.errors;
+                $.notify({
+                    icon: "icon-bell",
+                    title: 'Lỗi',
+                    message: errors ? errors[Object.keys(errors)[0]][0] : 'Đã có lỗi xảy ra!'
+                }, {
+                    type: 'danger',
+                    placement: { from: "top", align: "right" },
+                    time: 1000
                 });
             }
         });

@@ -8,10 +8,15 @@ use Illuminate\Database\Eloquent\Model;
 class Customer extends Model
 {
     use HasFactory;
-    protected $fillable = ['name', 'email', 'phone'];
+    protected $guarded = [];
 
     public function orders()
     {
         return $this->hasMany(Order::class);
+    }
+
+    public function group()
+    {
+        return $this->belongsTo(CustomerGroup::class, 'customer_group_id');
     }
 }

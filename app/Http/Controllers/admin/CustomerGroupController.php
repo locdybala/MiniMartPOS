@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers\admin;
 
+use App\Models\Category;
 use App\Models\CustomerGroup;
 use Illuminate\Http\Request;
 
 class CustomerGroupController extends Controller
 {
     public function index() {
-        $customerGroups = CustomerGroup::all();
+        $customerGroups = CustomerGroup::orderBy('id', 'desc')->get();
         return view('admin.customer_groups.index', compact('customerGroups'));
     }
 
@@ -22,7 +23,12 @@ class CustomerGroupController extends Controller
             'name' => $request->name,
             'status' => $request->status ?? 1,
         ]);
-        return redirect()->route('customer_groups.index')->with('success', 'Nhóm khách hàng đã được tạo!');
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Nhóm khách hàng đã được tạo!',
+            'customerGroup' => $customerGroup
+        ]);
     }
 
     public function edit(CustomerGroup $customerGroup) {
@@ -35,11 +41,11 @@ class CustomerGroupController extends Controller
             'name' => $request->name,
             'status' => $request->status ?? 1,
         ]);
-        return redirect()->route('customer_groups.index')->with('success', 'Cập nhật thành công!');
+        return response()->json(['status' => 'success', 'message' => 'Cập nhật loại khách hàng thành công!']);
     }
 
     public function destroy(CustomerGroup $customerGroup) {
         $customerGroup->delete();
-        return redirect()->route('customer_groups.index')->with('success', 'Xóa thành công!');
+        return response()->json(['status' => 'success', 'message' => 'Xóa nhóm khách hàng thành công!']);
     }
 }

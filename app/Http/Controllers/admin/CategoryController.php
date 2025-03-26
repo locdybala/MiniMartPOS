@@ -41,22 +41,14 @@ class CategoryController extends Controller
 
     }
 
-    public function update(Request $request)
+    public function update(Request $request, $id)
     {
-        // Tìm danh mục theo ID
-        $category = Category::find($request->id);
+        $group = CustomerGroup::findOrFail($id);
+        $group->name = $request->name;
+        $group->status = $request->status;
+        $group->save();
 
-        if (!$category) {
-            return response()->json(['status' => 'error', 'message' => 'Danh mục không tồn tại!']);
-        }
-
-        // Cập nhật thông tin
-        $category->name = $request->name;
-        $category->description = $request->description;
-        $category->status = $request->status ? 1 : 0;
-        $category->save();
-
-        return response()->json(['status' => 'success', 'message' => 'Cập nhật danh mục thành công!']);
+        return response()->json(['success' => true, 'message' => 'Cập nhật thành công']);
     }
 
     public function destroy($id)
