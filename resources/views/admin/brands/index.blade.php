@@ -33,7 +33,7 @@
                             role="dialog"
                             aria-hidden="true"
                         >
-                            <form id="brandForm">
+                            <form id="brandForm" enctype="multipart/form-data">
                                 @csrf
                                 <div class="modal-dialog" role="document">
                                     <div class="modal-content">
@@ -63,6 +63,12 @@
                                                             class="form-control"
                                                             placeholder="Nhập tên {{$title}}"
                                                         />
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-12">
+                                                    <div class="form-group form-group-default">
+                                                        <label>Ảnh thương hiệu</label>
+                                                        <input type="file" class="form-control" id="brandImage" name="image">
                                                     </div>
                                                 </div>
                                                 <div class="col-md-12">
@@ -100,6 +106,7 @@
                                 <tr>
                                     <th>STT</th>
                                     <th>Tên {{$title}}</th>
+                                    <th>Ảnh</th>
                                     <th>Người tạo</th>
                                     <th>Trạng thái</th>
                                     <th style="width: 10%">Thao tác</th>
@@ -109,6 +116,7 @@
                                 <tr>
                                     <th>STT</th>
                                     <th>Tên {{$title}}</th>
+                                    <th>Ảnh</th>
                                     <th>Người tạo</th>
                                     <th>Trạng thái</th>
                                     <th style="width: 10%">Thao tác</th>
@@ -120,6 +128,13 @@
                                     <tr>
                                         <td> {{$i}}</td>
                                         <td>{{$brand->name}}</td>
+                                        <td>
+                                            @if($brand->image)
+                                                <img src="{{ asset('storage/' . $brand->image) }}" alt="Ảnh thương hiệu" width="50">
+                                            @else
+                                                Không có ảnh
+                                            @endif
+                                        </td>
                                         <td> {{ $brand->user ? $brand->user->name : 'Không xác định' }}</td>
                                         <td>@if($brand->status == 1) Hoạt động @else Không hoạt động @endif</td>
                                         <td>
@@ -149,7 +164,7 @@
                                                                 </button>
                                                             </div>
                                                             <div class="modal-body">
-                                                                <form id="editBrandForm">
+                                                                <form id="editBrandForm" enctype="multipart/form-data">
                                                                     @csrf
                                                                     <input type="hidden" id="editBrandId">
                                                                     <div class="row">
@@ -157,6 +172,13 @@
                                                                             <div class="form-group form-group-default">
                                                                                 <label>Tên {{$title}}</label>
                                                                                 <input id="editNameBrand" name="name" type="text" class="form-control">
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-md-12">
+                                                                            <div class="form-group form-group-default">
+                                                                                <label>Ảnh thương hiệu</label>
+                                                                                <input type="file" class="form-control" id="editBrandImage" name="image">
+                                                                                <img id="previewEditImage" src="" alt="Ảnh hiện tại" width="100" class="mt-2">
                                                                             </div>
                                                                         </div>
                                                                         <div class="col-md-12">
@@ -202,59 +224,49 @@
 @endsection
 @section('js')
     <script>
-        $(document).ready(function () {
-            $("#addBrand").click(function (e) {
-                e.preventDefault(); // Ngăn chặn form submit mặc định
+        $(document).on("click", "#addBrand", function (e) {
+            e.preventDefault();
 
-                let name = $("#nameBrand").val();
-                let description = $("#description").val();
-                let status = $("#statusBrand").is(":checked") ? 1 : 0;
+            let formData = new FormData();
+            formData.append("name", $("#nameBrand").val());
+            formData.append("description", $("#description").val());
+            formData.append("status", $("#statusBrand").is(":checked") ? 1 : 0);
+            formData.append("image", $("#brandImage")[0].files[0]); // Lấy ảnh từ input file
+            formData.append("_token", "{{ csrf_token() }}");
 
-                $.ajax({
-                    url: "{{ route('brands.store') }}",
-                    type: "POST",
-                    data: {
-                        name: name,
-                        description: description,
-                        status: status,
-                        _token: "{{ csrf_token() }}"
-                    },
-                    success: function (response) {
-                        if (response.success) {
-                            $("#addBrandForm").modal("hide");
-                            $.notify({
-                                icon: "icon-bell",
-                                title: 'Thông báo',
-                                message: response.message
-                            }, {
-                                type: 'success',
-                                placement: {
-                                    from: "top",
-                                    align: "right",
-                                },
-                                time: 1000
-                            });
-                            setTimeout(function () {
-                                location.reload();
-                            }, 1000);
-                        }
-                    },
-                    error: function (xhr) {
-                        let errors = xhr.responseJSON.errors;
+            $.ajax({
+                url: "{{ route('brands.store') }}",
+                type: "POST",
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function (response) {
+                    if (response.success) {
+                        $("#addBrandForm").modal("hide");
                         $.notify({
                             icon: "icon-bell",
                             title: 'Thông báo',
-                            message: errors[Object.keys(errors)[0]][0]
+                            message: response.message
                         }, {
-                            type: 'warning',
-                            placement: {
-                                from: "top",
-                                align: "right",
-                            },
+                            type: 'success',
+                            placement: { from: "top", align: "right" },
                             time: 1000
                         });
+                        setTimeout(() => location.reload(), 1000);
                     }
-                });
+                },
+                error: function (xhr) {
+                    let errors = xhr.responseJSON.errors;
+                    $.notify({
+                        icon: "icon-bell",
+                        title: 'Thông báo',
+                        message: errors[Object.keys(errors)[0]][0]
+                    }, {
+                        type: 'warning',
+                        placement: { from: "top", align: "right" },
+                        time: 1000
+                    });
+                }
             });
         });
         $(document).on("click", ".editBrandBtn", function () {
@@ -262,35 +274,45 @@
             let name = $(this).data("name");
             let description = $(this).data("description");
             let status = $(this).data("status");
+            let image = $(this).data("image");
 
-            // Gán giá trị vào các ô input trong modal
             $("#editBrandId").val(id);
             $("#editNameBrand").val(name);
             $("#editDescription").val(description);
             $("#editStatusBrand").prop("checked", status == 1);
 
-            // Mở modal (trong trường hợp Bootstrap chưa tự mở)
+            // Hiển thị ảnh cũ
+            if (image) {
+                $("#previewEditImage").attr("src", "/uploads/brands/" + image).show();
+            } else {
+                $("#previewEditImage").hide();
+            }
+
             $("#editBrandModal").modal("show");
         });
 
         $(document).on("click", "#updateBrand", function (e) {
-            e.preventDefault(); // Ngăn form submit mặc định
+            e.preventDefault();
 
-            let id = $("#editBrandId").val();
-            let name = $("#editNameBrand").val();
-            let description = $("#editDescription").val();
-            let status = $("#editStatusBrand").prop("checked") ? 1 : 0;
+            let formData = new FormData();
+            formData.append("id", $("#editBrandId").val());
+            formData.append("name", $("#editNameBrand").val());
+            formData.append("description", $("#editDescription").val());
+            formData.append("status", $("#editStatusBrand").is(":checked") ? 1 : 0);
+
+            let imageFile = $("#editBrandImage")[0].files[0];
+            if (imageFile) {
+                formData.append("image", imageFile); // Chỉ thêm nếu có ảnh mới
+            }
+
+            formData.append("_token", "{{ csrf_token() }}");
 
             $.ajax({
                 url: "{{ route('brands.update') }}",
                 type: "POST",
-                data: {
-                    _token: $("input[name=_token]").val(),
-                    id: id,
-                    name: name,
-                    description: description,
-                    status: status
-                },
+                data: formData,
+                contentType: false,
+                processData: false,
                 success: function (response) {
                     if (response.status === "success") {
                         $("#editBrandModal").modal("hide");
@@ -300,28 +322,10 @@
                             message: response.message
                         }, {
                             type: 'success',
-                            placement: {
-                                from: "top",
-                                align: "right",
-                            },
+                            placement: { from: "top", align: "right" },
                             time: 1000
                         });
-                        setTimeout(function () {
-                            location.reload();
-                        }, 1000);
-                    } else {
-                        $.notify({
-                            icon: "icon-bell",
-                            title: 'Thông báo',
-                            message: response.message
-                        }, {
-                            type: 'danger',
-                            placement: {
-                                from: "top",
-                                align: "right",
-                            },
-                            time: 1000
-                        });
+                        setTimeout(() => location.reload(), 1000);
                     }
                 },
                 error: function (error) {
@@ -329,18 +333,16 @@
                     $.notify({
                         icon: "icon-bell",
                         title: 'Thông báo',
-                        message: error.message
+                        message: "Có lỗi xảy ra, vui lòng thử lại!"
                     }, {
                         type: 'warning',
-                        placement: {
-                            from: "top",
-                            align: "right",
-                        },
+                        placement: { from: "top", align: "right" },
                         time: 1000
                     });
                 }
             });
         });
+
 
         //Xoá
         $(document).on("click", ".deleteBrand", function (e) {

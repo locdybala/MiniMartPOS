@@ -15,6 +15,7 @@ use App\Http\Controllers\admin\CustomerGroupController;
 use App\Http\Controllers\admin\CustomerController;
 use App\Http\Controllers\frontend\FrontendController;
 use App\Http\Controllers\admin\PostController;
+use App\Http\Controllers\frontend\PostsController;
 
 
 /*
@@ -29,6 +30,8 @@ use App\Http\Controllers\admin\PostController;
 */
 
 Route::get('/', [FrontendController::class, 'index'])->name('frontend.home');
+Route::get('/posts', [PostsController::class, 'index'])->name('posts_index');
+Route::get('/contact', [FrontendController::class, 'contact'])->name('contact');
 
 Route::prefix('admin')->group(function () {
     Route::get('/dashboard', [HomeController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');

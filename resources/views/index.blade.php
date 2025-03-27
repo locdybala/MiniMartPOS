@@ -5,18 +5,19 @@
     <section class="categories">
         <div class="container">
             <div class="row">
-                <div class="categories__slider owl-carousel">
-                    @foreach ($brands as $brand)
-                        <div class="col-lg-3">
+                @if ($brands->isNotEmpty())
+                    <div class="categories__slider owl-carousel">
+                        @foreach ($brands as $brand)
                             <div class="categories__item set-bg" data-setbg="{{ asset('storage/' . $brand->image) }}">
                                 <h5><a href="#">{{ $brand->name }}</a></h5>
                             </div>
-                        </div>
-                    @endforeach
-                    @if ($brands->isEmpty())
-                        <p class="text-center">Không có thương hiệu nào.</p>
-                    @endif
-                </div>
+                        @endforeach
+                    </div>
+                @else
+                    <div class="col-lg-12 text-center">
+                        <p>Không có thương hiệu nào.</p>
+                    </div>
+                @endif
             </div>
         </div>
     </section>
@@ -161,57 +162,37 @@
             <div class="row">
                 <div class="col-lg-12">
                     <div class="section-title from-blog__title">
-                        <h2>From The Blog</h2>
+                        <h2>Bài viết</h2>
                     </div>
                 </div>
             </div>
-            <div class="row">
-                <div class="col-lg-4 col-md-4 col-sm-6">
-                    <div class="blog__item">
-                        <div class="blog__item__pic">
-                            <img src="{{asset('frontend/img/blog/blog-1.jpg')}}" alt="">
-                        </div>
-                        <div class="blog__item__text">
-                            <ul>
-                                <li><i class="fa fa-calendar-o"></i> May 4,2019</li>
-                                <li><i class="fa fa-comment-o"></i> 5</li>
-                            </ul>
-                            <h5><a href="#">Cooking tips make cooking simple</a></h5>
-                            <p>Sed quia non numquam modi tempora indunt ut labore et dolore magnam aliquam quaerat </p>
-                        </div>
+
+            @if($latestPosts->isEmpty())
+                <div class="row">
+                    <div class="col-lg-12 text-center">
+                        <p>Hiện chưa có bài viết nào.</p>
                     </div>
                 </div>
-                <div class="col-lg-4 col-md-4 col-sm-6">
-                    <div class="blog__item">
-                        <div class="blog__item__pic">
-                            <img src="{{asset('frontend/img/blog/blog-2.jpg')}}" alt="">
+            @else
+                <div class="row">
+                    @foreach($latestPosts as $post)
+                        <div class="col-lg-4 col-md-4 col-sm-6">
+                            <div class="blog__item">
+                                <div class="blog__item__pic">
+                                    <img src="{{ asset('storage/' . $post->image) }}" alt="{{ $post->title }}">
+                                </div>
+                                <div class="blog__item__text">
+                                    <ul>
+                                        <li><i class="fa fa-calendar-o"></i> {{ $post->created_at->format('d/m/Y') }}</li>
+                                    </ul>
+                                    <h5><a href="{{ route('posts.show', $post->slug) }}">{{ $post->title }}</a></h5>
+                                    <p>{{ Str::limit(strip_tags($post->content), 100) }}</p>
+                                </div>
+                            </div>
                         </div>
-                        <div class="blog__item__text">
-                            <ul>
-                                <li><i class="fa fa-calendar-o"></i> May 4,2019</li>
-                                <li><i class="fa fa-comment-o"></i> 5</li>
-                            </ul>
-                            <h5><a href="#">6 ways to prepare breakfast for 30</a></h5>
-                            <p>Sed quia non numquam modi tempora indunt ut labore et dolore magnam aliquam quaerat </p>
-                        </div>
-                    </div>
+                    @endforeach
                 </div>
-                <div class="col-lg-4 col-md-4 col-sm-6">
-                    <div class="blog__item">
-                        <div class="blog__item__pic">
-                            <img src="{{asset('frontend/img/blog/blog-3.jpg')}}" alt="">
-                        </div>
-                        <div class="blog__item__text">
-                            <ul>
-                                <li><i class="fa fa-calendar-o"></i> May 4,2019</li>
-                                <li><i class="fa fa-comment-o"></i> 5</li>
-                            </ul>
-                            <h5><a href="#">Visit the clean farm in the US</a></h5>
-                            <p>Sed quia non numquam modi tempora indunt ut labore et dolore magnam aliquam quaerat </p>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            @endif
         </div>
     </section>
     <!-- Blog Section End -->
