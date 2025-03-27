@@ -27,7 +27,7 @@ use App\Http\Controllers\admin\CustomerController;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('index');
 });
 
 
