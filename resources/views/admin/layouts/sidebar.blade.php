@@ -148,6 +148,13 @@
                         </ul>
                     </div>
                 </li>
+                <li class="nav-item">
+                    <a  href="{{route('posts.index')}}">
+                        <i class="fas fa-table"></i>
+                        <p>Quản lý bài viết</p>
+
+                    </a>
+                </li>
             </ul>
         </div>
     </div>

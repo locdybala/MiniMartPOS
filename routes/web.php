@@ -13,6 +13,8 @@ use App\Http\Controllers\admin\InventoryController;
 use App\Http\Controllers\admin\OrderController;
 use App\Http\Controllers\admin\CustomerGroupController;
 use App\Http\Controllers\admin\CustomerController;
+use App\Http\Controllers\frontend\FrontendController;
+use App\Http\Controllers\admin\PostController;
 
 
 /*
@@ -26,10 +28,7 @@ use App\Http\Controllers\admin\CustomerController;
 |
 */
 
-Route::get('/', function () {
-    return view('index');
-});
-
+Route::get('/', [FrontendController::class, 'index'])->name('frontend.home');
 
 Route::prefix('admin')->group(function () {
     Route::get('/dashboard', [HomeController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
@@ -85,6 +84,7 @@ Route::prefix('admin')->group(function () {
         Route::resource('customers', CustomerController::class);
         Route::resource('orders', OrderController::class);
         Route::get('/getCustomers', [CustomerController::class, 'getCustomers']);
+        Route::resource('posts', PostController::class);
     });
 });
 
