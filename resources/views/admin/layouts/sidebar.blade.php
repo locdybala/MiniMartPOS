@@ -115,7 +115,7 @@
                     <div class="collapse" id="forms">
                         <ul class="nav nav-collapse">
                             <li>
-                                <a href="forms/forms.html">
+                                <a href="{{route('orders.create')}}">
                                     <span class="sub-item">Bán hàng</span>
                                 </a>
                             </li>

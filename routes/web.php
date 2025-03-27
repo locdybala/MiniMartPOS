@@ -84,6 +84,7 @@ Route::prefix('admin')->group(function () {
         Route::resource('customer_groups', CustomerGroupController::class);
         Route::resource('customers', CustomerController::class);
         Route::resource('orders', OrderController::class);
+        Route::get('/getCustomers', [CustomerController::class, 'getCustomers']);
     });
 });
 

@@ -57,4 +57,10 @@ class CustomerController extends Controller
         $customer->delete();
         return response()->json(['message' => 'Xóa thành công!']);
     }
+
+    public function getCustomers()
+    {
+        $customers = Customer::select('id', 'name', 'phone')->get();
+        return response()->json($customers);
+    }
 }
