@@ -16,6 +16,7 @@ use App\Http\Controllers\admin\CustomerController;
 use App\Http\Controllers\frontend\FrontendController;
 use App\Http\Controllers\admin\PostController;
 use App\Http\Controllers\frontend\PostsController;
+use App\Http\Controllers\frontend\ShopController;
 
 
 /*
@@ -32,6 +33,15 @@ use App\Http\Controllers\frontend\PostsController;
 Route::get('/', [FrontendController::class, 'index'])->name('frontend.home');
 Route::get('/posts', [PostsController::class, 'index'])->name('posts_index');
 Route::get('/contact', [FrontendController::class, 'contact'])->name('contact');
+Route::get('/products/{id}', [ShopController::class, 'productDetails'])->name('product.details');
+Route::get('/shop', [ShopController::class, 'index'])->name('shop.index');
+Route::get('/shop/{id}', [ShopController::class, 'categoryList'])->name('shop.categoryList');
+Route::post('/product/{id}/review', [ShopController::class, 'store'])->name('product.review');
+Route::prefix('customer')->group(function () {
+    Route::get('/login', [CustomerAuthController::class, 'showLoginForm'])->name('customer.login');
+    Route::post('/login', [CustomerAuthController::class, 'login'])->name('customer.login.post');
+    Route::post('/logout', [CustomerAuthController::class, 'logout'])->name('customer.logout');
+});
 
 Route::prefix('admin')->group(function () {
     Route::get('/dashboard', [HomeController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');

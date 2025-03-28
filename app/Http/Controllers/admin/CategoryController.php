@@ -41,14 +41,14 @@ class CategoryController extends Controller
 
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
-        $group = CustomerGroup::findOrFail($id);
+        $group = Category::findOrFail($request->id);
         $group->name = $request->name;
         $group->status = $request->status;
         $group->save();
 
-        return response()->json(['success' => true, 'message' => 'Cập nhật thành công']);
+        return response()->json(['success' => success, 'message' => 'Cập nhật danh mục thành công']);
     }
 
     public function destroy($id)

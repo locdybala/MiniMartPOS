@@ -8,7 +8,7 @@
                 @if ($brands->isNotEmpty())
                     <div class="categories__slider owl-carousel">
                         @foreach ($brands as $brand)
-                            <div class="categories__item set-bg" data-setbg="{{ asset('storage/' . $brand->image) }}">
+                            <div class="categories__item set-bg" style="width: 262px;" data-setbg="{{ asset('storage/' . $brand->image) }}">
                                 <h5><a href="#">{{ $brand->name }}</a></h5>
                             </div>
                         @endforeach
@@ -35,7 +35,7 @@
                         <ul>
                             <li class="active" data-filter="*">Tất cả</li>
                             @foreach ($categories as $category)
-                                <li data-filter=".{{ $category->slug }}">{{ $category->name }}</li>
+                                <li data-filter=".{{ Str::slug($category->name, '_') }}">{{ $category->name }}</li>
                             @endforeach
                         </ul>
                     </div>
@@ -47,12 +47,13 @@
                 @else
                     @foreach ($listProducts as $product)
                         @php
-                            // Lấy danh mục của sản phẩm dưới dạng class cho filter
-                            $categoryClasses = implode(' ', $product->categories->pluck('name')->toArray());
+                            // Chuyển danh mục thành slug
+                            $categoryClasses = Str::slug($product->category->name, '_');
                         @endphp
+
                         <div class="col-lg-3 col-md-4 col-sm-6 mix {{ $categoryClasses }}">
                             <div class="featured__item">
-                                <div class="featured__item__pic set-bg" data-setbg="{{ asset('storage/' . $product->image) }}">
+                                <div class="featured__item__pic set-bg" data-setbg="{{ asset('storage/'.$product->images->first()->image_path) }}">
                                     <ul class="featured__item__pic__hover">
                                         <li><a href="#"><i class="fa fa-heart"></i></a></li>
                                         <li><a href="#"><i class="fa fa-retweet"></i></a></li>
@@ -106,7 +107,7 @@
                                     @foreach ($latestProducts as $product)
                                         <a href="{{ route('product.details', $product->id) }}" class="latest-product__item">
                                             <div class="latest-product__item__pic">
-                                                <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}">
+                                                <img src="{{ asset('storage/'.$product->images->first()->image_path) }}" alt="{{ $product->name }}">
                                             </div>
                                             <div class="latest-product__item__text">
                                                 <h6>{{ $product->name }}</h6>
@@ -134,7 +135,7 @@
                                     @foreach ($topRatedProducts as $product)
                                         <a href="{{ route('product.details', $product->id) }}" class="latest-product__item">
                                             <div class="latest-product__item__pic">
-                                                <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}">
+                                                <img src="{{ asset('storage/'.$product->images->first()->image_path) }}" alt="{{ $product->name }}">
                                             </div>
                                             <div class="latest-product__item__text">
                                                 <h6>{{ $product->name }}</h6>

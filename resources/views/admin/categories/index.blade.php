@@ -201,6 +201,7 @@
     </div>
 @endsection
 @section('js')
+
     <script>
         $(document).ready(function () {
             $("#addCategory").click(function (e) {
@@ -274,6 +275,7 @@
         });
 
         $(document).on("click", "#updateCategory", function (e) {
+            debugger
             e.preventDefault(); // Ngăn form submit mặc định
 
             let id = $("#editCategoryId").val();
