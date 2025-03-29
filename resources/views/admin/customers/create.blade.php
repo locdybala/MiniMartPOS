@@ -15,7 +15,7 @@
                         <div class="card-title">{{ $action . 'Khách hàng' }}</div>
                     </div>
                     <div class="card-body">
-                        <form action="{{ isset($customer) ? route('customers.update', $customer->id) : route('customers.store') }}" method="POST">
+                        <form action="{{ isset($customer) ? route('customer.update', $customer->id) : route('customer.store') }}" method="POST">
                             @csrf
                             @if(isset($customer))
                                 @method('PUT')
@@ -45,7 +45,7 @@
                             </div>
                             <div class="card-action">
                                 <button type="submit" class="btn btn-success">{{ isset($customer) ? 'Cập nhật' : 'Thêm' }}</button>
-                                <a href="{{ route('customers.index') }}" class="btn btn-danger">Hủy</a>
+                                <a href="{{ route('customer.index') }}" class="btn btn-danger">Hủy</a>
                             </div>
                         </form>
                     </div>

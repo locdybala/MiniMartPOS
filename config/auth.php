@@ -43,7 +43,7 @@ return [
         // Thêm guard cho customer
         'customer' => [
             'driver' => 'session',
-            'provider' => 'customers',
+            'provider' => 'customer',
         ],
     ],
 
@@ -70,7 +70,7 @@ return [
             'model' => App\Models\User::class,
         ],
 // Thêm provider cho customer
-        'customers' => [
+        'customer' => [
             'driver' => 'eloquent',
             'model' => App\Models\Customer::class, // Model khách hàng
         ],

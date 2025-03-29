@@ -11,7 +11,7 @@
         <div class="card">
             <div class="card-header d-flex align-items-center">
                 <h4 class="card-title">Quản lý {{ $title }}</h4>
-                <a href="{{ route('customers.create') }}" class="btn btn-primary ms-auto">
+                <a href="{{ route('customer.create') }}" class="btn btn-primary ms-auto">
                     <i class="fa fa-plus"></i> Thêm mới
                 </a>
             </div>
@@ -35,7 +35,7 @@
                                 <td>{{ $customer->email }}</td>
                                 <td>{{ $customer->phone }}</td>
                                 <td>
-                                    <a href="{{ route('customers.edit', $customer) }}" class="btn btn-primary btn-sm">
+                                    <a href="{{ route('customer.edit', $customer) }}" class="btn btn-primary btn-sm">
                                         <i class="fa fa-edit"></i>
                                     </a>
                                     <button class="btn btn-danger btn-sm deleteCustomer" data-id="{{ $customer->id }}">

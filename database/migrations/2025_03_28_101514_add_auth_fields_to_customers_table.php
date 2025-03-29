@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('customers', function (Blueprint $table) {
+        Schema::table('customer', function (Blueprint $table) {
             $table->string('password')->nullable(); // Thêm cột password
             $table->rememberToken(); // Thêm remember_token để hỗ trợ "Remember Me"
         });
@@ -22,7 +22,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('customers', function (Blueprint $table) {
+        Schema::table('customer', function (Blueprint $table) {
             //
         });
     }

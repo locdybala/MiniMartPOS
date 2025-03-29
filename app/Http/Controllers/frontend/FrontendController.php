@@ -14,7 +14,10 @@ class FrontendController extends Controller
     public function index()
     {
         $latestProducts = Product::orderBy('created_at', 'desc')->take(6)->get(); // 6 sản phẩm mới nhất
-        $topRatedProducts = Product::orderBy('rating', 'desc')->take(6)->get(); // 6 sản phẩm đánh giá cao nhất
+        $topRatedProducts = Product::withAvg('reviews', 'rating') // Lấy trung bình rating từ bảng reviews
+        ->orderByDesc('reviews_avg_rating') // Sắp xếp theo rating trung bình
+        ->take(6)
+            ->get();
         $listProducts = Product::with('category')->orderBy('created_at', 'desc')->limit(8)->get();
         $brands = Brand::all();
         $latestPosts = Post::where('status', 1)->latest()->take(3)->get();

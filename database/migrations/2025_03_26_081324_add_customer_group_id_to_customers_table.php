@@ -6,13 +6,13 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration {
     public function up() {
-        Schema::table('customers', function (Blueprint $table) {
+        Schema::table('customer', function (Blueprint $table) {
             $table->foreignId('customer_group_id')->nullable()->constrained('customer_groups')->nullOnDelete();
         });
     }
 
     public function down() {
-        Schema::table('customers', function (Blueprint $table) {
+        Schema::table('customer', function (Blueprint $table) {
             $table->dropForeign(['customer_group_id']);
             $table->dropColumn('customer_group_id');
         });

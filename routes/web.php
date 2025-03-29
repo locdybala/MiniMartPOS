@@ -17,7 +17,7 @@ use App\Http\Controllers\frontend\FrontendController;
 use App\Http\Controllers\admin\PostController;
 use App\Http\Controllers\frontend\PostsController;
 use App\Http\Controllers\frontend\ShopController;
-
+use App\Http\Controllers\frontend\CustomerAuthController;
 
 /*
 |--------------------------------------------------------------------------
@@ -41,6 +41,9 @@ Route::prefix('customer')->group(function () {
     Route::get('/login', [CustomerAuthController::class, 'showLoginForm'])->name('customer.login');
     Route::post('/login', [CustomerAuthController::class, 'login'])->name('customer.login.post');
     Route::post('/logout', [CustomerAuthController::class, 'logout'])->name('customer.logout');
+    Route::get('/profile', [CustomerController::class, 'profile'])->name('customer.profile');
+    Route::get('/orders', [CustomerController::class, 'orders'])->name('customer.orders');
+
 });
 
 Route::prefix('admin')->group(function () {
@@ -94,7 +97,7 @@ Route::prefix('admin')->group(function () {
         Route::get('/orders/create', [OrderController::class, 'create'])->name('orders.create');
         Route::post('/orders', [OrderController::class, 'store'])->name('orders.store');
         Route::resource('customer_groups', CustomerGroupController::class);
-        Route::resource('customers', CustomerController::class);
+        Route::resource('customer', CustomerController::class);
         Route::resource('orders', OrderController::class);
         Route::get('/getCustomers', [CustomerController::class, 'getCustomers']);
         Route::resource('posts', PostController::class);

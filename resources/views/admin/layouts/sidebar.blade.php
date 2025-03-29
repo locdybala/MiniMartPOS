@@ -99,7 +99,7 @@
                                 </a>
                             </li>
                             <li>
-                                <a href="{{route('customers.index')}}">
+                                <a href="{{route('customer.index')}}">
                                     <span class="sub-item">Khách hàng</span>
                                 </a>
                             </li>

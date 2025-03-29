@@ -11,45 +11,45 @@ class CustomerController extends Controller
     public function index()
     {
         $customers = Customer::all();
-        return view('admin.customers.index', compact('customers'));
+        return view('admin.customer.index', compact('customers'));
     }
 
     public function create()
     {
         $customerGroups= CustomerGroup::all();
-        return view('admin.customers.create',compact('customerGroups'));
+        return view('admin.customer.create',compact('customerGroups'));
     }
 
     public function store(Request $request)
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'nullable|email|unique:customers,email',
+            'email' => 'nullable|email|unique:customer,email',
             'phone' => 'nullable|string|max:20',
         ]);
 
         Customer::create($request->all());
 
-        return redirect()->route('customers.index')->with('success', 'Khách hàng đã được thêm!');
+        return redirect()->route('customer.index')->with('success', 'Khách hàng đã được thêm!');
     }
 
     public function edit(Customer $customer)
     {
         $customerGroups= CustomerGroup::all();
-        return view('admin.customers.create', compact('customer', 'customerGroups'));
+        return view('admin.customer.create', compact('customer', 'customerGroups'));
     }
 
     public function update(Request $request, Customer $customer)
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'nullable|email|unique:customers,email,' . $customer->id,
+            'email' => 'nullable|email|unique:customer,email,' . $customer->id,
             'phone' => 'nullable|string|max:20',
         ]);
 
         $customer->update($request->all());
 
-        return redirect()->route('customers.index')->with('success', 'Khách hàng đã được cập nhật!');
+        return redirect()->route('customer.index')->with('success', 'Khách hàng đã được cập nhật!');
     }
 
     public function destroy(Customer $customer)
