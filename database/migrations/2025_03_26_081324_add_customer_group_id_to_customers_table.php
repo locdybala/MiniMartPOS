@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration {
     public function up() {
-        Schema::table('customer', function (Blueprint $table) {
+        Schema::table('customers', function (Blueprint $table) {
             $table->foreignId('customer_group_id')->nullable()->constrained('customer_groups')->nullOnDelete();
         });
     }

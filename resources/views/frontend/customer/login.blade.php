@@ -42,11 +42,11 @@
                             <button type="submit" class="btn btn-primary btn-block">Đăng nhập</button>
                         </form>
                         <div class="text-center mt-3">
-                            <a href="">Quên mật khẩu?</a>
+                            <a href="{{route('customer.forgot')}}">Quên mật khẩu?</a>
                         </div>
                         <div class="text-center mt-2">
                             <span>Chưa có tài khoản? </span>
-                            <a href="">Đăng ký ngay</a>
+                            <a href="{{route('customer.register')}}">Đăng ký ngay</a>
                         </div>
                     </div>
                 </div>

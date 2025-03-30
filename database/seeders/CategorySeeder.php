@@ -14,14 +14,20 @@ class CategorySeeder extends Seeder
     public function run(): void
     {
         $categories = [
-            ['name' => 'Thực phẩm', 'description' => 'Tc', 'status' => 1, 'created_by' => 1],
-            ['name' => 'Đồ uống', 'description' => 'Đối thủ của Coca-Cola', 'status' => 1, 'created_by' => 1],
-            ['name' => 'Gia vị', 'description' => 'Đối thủ của Coca-Cola', 'status' => 1, 'created_by' => 1],
-            ['name' => 'Hóa mỹ phẩm', 'description' => 'Đối thủ của Coca-Cola', 'status' => 1, 'created_by' => 1]
+            ['name' => 'Thế giới mỳ ăn liền', 'description' => 'Tc', 'status' => 1, 'created_by' => 1],
+            ['name' => 'Gia Vị Dầu Ăn', 'description' => 'Đối thủ của Coca-Cola', 'status' => 1, 'created_by' => 1],
+            ['name' => 'Bánh Kẹo', 'description' => 'Đối thủ của Coca-Cola', 'status' => 1, 'created_by' => 1],
+            ['name' => 'Giải Khát', 'description' => null, 'status' => 1, 'created_by' => 1],
+            ['name' => 'Đồ Dùng Nhà Bếp', 'description' => null, 'status' => 1, 'created_by' => 1],
+            ['name' => 'Tắm Gội Xả', 'description' => null, 'status' => 1, 'created_by' => 1],
+            ['name' => 'Tương Mắm', 'description' => null, 'status' => 1, 'created_by' => 1],
+            ['name' => 'Điện gia dụng', 'description' => null, 'status' => 1, 'created_by' => 1],
+            ['name' => 'Sản phẩm từ sữa', 'description' => null, 'status' => 1, 'created_by' => 1],
+            ['name' => 'Trà Cafe', 'description' => null, 'status' => 1, 'created_by' => 1],
         ];
 
         foreach ($categories as $category) {
-            Category::create(['name' => $category]);
+            Category::create($category);
         }
     }
 }

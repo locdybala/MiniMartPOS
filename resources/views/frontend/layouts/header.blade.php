@@ -86,22 +86,20 @@
                         <div class="header__top__right__auth">
                             @if(Auth::guard('customer')->check())
                                 <div class="dropdown">
-                                    <a href="#" class="dropdown-toggle" id="customerDropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <a class="nav-link dropdown-toggle" href="#" id="customerDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                         <i class="fa fa-user"></i> {{ Auth::guard('customer')->user()->name }}
                                     </a>
-                                    <ul class="dropdown-menu" aria-labelledby="customerDropdown">
-                                        <li><a class="dropdown-item" href="{{ route('customer.profile') }}">Tài khoản</a></li>
-                                        <li><a class="dropdown-item" href="{{ route('customer.orders') }}">Đơn hàng</a></li>
-                                        <li>
-                                            <a class="dropdown-item" href="{{ route('customer.logout') }}"
-                                               onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                                                Đăng xuất
-                                            </a>
-                                        </li>
+                                    <div class="dropdown-menu" aria-labelledby="customerDropdown">
+                                        <a class="dropdown-item" href="{{ route('customer.profile') }}">Tài khoản</a>
+                                        <a class="dropdown-item" href="{{ route('customer.orders') }}">Đơn hàng</a>
+                                        <a class="dropdown-item" href="{{ route('customer.logout') }}"
+                                           onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                            Đăng xuất
+                                        </a>
                                         <form id="logout-form" action="{{ route('customer.logout') }}" method="POST" style="display: none;">
                                             @csrf
                                         </form>
-                                    </ul>
+                                    </div>
                                 </div>
                             @else
                                 <a href="{{ route('customer.login') }}"><i class="fa fa-user"></i> Đăng nhập</a>
@@ -140,7 +138,12 @@
             <div class="col-lg-3">
                 <div class="header__cart">
                     <ul>
-                        <li><a href="#"><i class="fa fa-shopping-bag"></i> <span>3</span></a></li>
+                        <li>
+                            <a href="{{ route('cart.index') }}">
+                                <i class="fa fa-shopping-bag"></i>
+                                <span id="cart-count">{{ Cart::getTotalQuantity() }}</span>
+                            </a>
+                        </li>
                     </ul>
                     <div class="header__cart__price">Tổng tiền: <span>0</span></div>
                 </div>
@@ -205,13 +208,3 @@
         </div>
     </div>
 </section>
-<!-- jQuery -->
-<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-
-<!-- Popper.js (Bắt buộc nếu dùng Bootstrap 4) -->
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
-
-<!-- Bootstrap 4 -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.min.js"></script>
-
-<!-- Hero Section End -->

@@ -5,10 +5,15 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Auth\Passwords\CanResetPassword;
+use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
+use Illuminate\Notifications\Notifiable;
 
-class Customer extends Authenticatable
+class Customer extends Authenticatable implements CanResetPasswordContract
+
 {
-    use HasFactory;
+    use CanResetPassword;
+    use HasFactory, Notifiable;
     protected $fillable = ['name', 'email', 'password', 'phone', 'customer_group_id'];
     protected $hidden = ['password', 'remember_token'];
 

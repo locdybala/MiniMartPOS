@@ -43,7 +43,7 @@ return [
         // Thêm guard cho customer
         'customer' => [
             'driver' => 'session',
-            'provider' => 'customer',
+            'provider' => 'customers',
         ],
     ],
 
@@ -70,7 +70,7 @@ return [
             'model' => App\Models\User::class,
         ],
 // Thêm provider cho customer
-        'customer' => [
+        'customers' => [
             'driver' => 'eloquent',
             'model' => App\Models\Customer::class, // Model khách hàng
         ],
@@ -103,6 +103,12 @@ return [
         'users' => [
             'provider' => 'users',
             'table' => 'password_reset_tokens',
+            'expire' => 60,
+            'throttle' => 60,
+        ],
+        'customers' => [
+            'provider' => 'customers',
+            'table' => 'password_reset_tokens', // Đổi tên bảng tại đây
             'expire' => 60,
             'throttle' => 60,
         ],

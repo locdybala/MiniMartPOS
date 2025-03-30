@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('customer', function (Blueprint $table) {
+        Schema::create('customers', function (Blueprint $table) {
             $table->id(); // id tự động tăng, kiểu BIGINT UNSIGNED
             $table->string('name');
             $table->string('email')->unique()->nullable();

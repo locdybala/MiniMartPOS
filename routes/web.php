@@ -18,6 +18,7 @@ use App\Http\Controllers\admin\PostController;
 use App\Http\Controllers\frontend\PostsController;
 use App\Http\Controllers\frontend\ShopController;
 use App\Http\Controllers\frontend\CustomerAuthController;
+use App\Http\Controllers\frontend\CartController;
 
 /*
 |--------------------------------------------------------------------------
@@ -43,9 +44,18 @@ Route::prefix('customer')->group(function () {
     Route::post('/logout', [CustomerAuthController::class, 'logout'])->name('customer.logout');
     Route::get('/profile', [CustomerController::class, 'profile'])->name('customer.profile');
     Route::get('/orders', [CustomerController::class, 'orders'])->name('customer.orders');
-
+    Route::get('/register', [CustomerAuthController::class, 'showRegisterForm'])->name('customer.register');
+    Route::post('/register', [CustomerAuthController::class, 'register']);
+    Route::get('/password/forgot', [CustomerAuthController::class, 'showForgotForm'])->name('customer.forgot');
+    Route::post('/password/email', [CustomerAuthController::class, 'sendResetLink'])->name('customer.send_email');
 });
 
+Route::prefix('cart')->group(function () {
+    Route::post('/add', [CartController::class, 'addToCart'])->name('cart.add');
+    Route::get('/index', [CartController::class, 'viewCart'])->name('cart.index');
+    Route::post('/update/{id}', [CartController::class, 'updateCart'])->name('cart.update');
+    Route::delete('/remove/{id}', [CartController::class, 'removeFromCart'])->name('cart.remove');
+});
 Route::prefix('admin')->group(function () {
     Route::get('/dashboard', [HomeController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
 

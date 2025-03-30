@@ -1,7 +1,7 @@
 @extends('frontend.layouts.frontend_layout')
 @section('content')
     <!-- Breadcrumb Section Begin -->
-    <section class="breadcrumb-section set-bg" data-setbg="img/breadcrumb.jpg">
+    <section class="breadcrumb-section set-bg" data-setbg="{{asset('frontend/img/breadcrumb.jpg')}}">
         <div class="container">
             <div class="row">
                 <div class="col-lg-12 text-center">
@@ -57,7 +57,7 @@
                                 </div>
                             </div>
                         </div>
-                        <a href="#" class="primary-btn">THÊM VÀO GIỎ HÀNG</a>
+                        <button class="btn primary-btn add-to-cart" data-id="{{ $product->id }}">THÊM VÀO GIỎ HÀNG</button>
                         <a href="#" class="heart-icon"><span class="icon_heart_alt"></span></a>
                         <ul>
                             <li><b>Trạng thái</b> <span>{{ $product->stock > 0 ? 'Còn hàng' : 'Hết hàng' }}</span></li>
@@ -189,4 +189,34 @@
             </div>
         </div>
     </section>
+@endsection
+@section('js')
+    <script>
+        $(document).ready(function(){
+            $(".add-to-cart").on("click", function(e){
+                e.preventDefault();
+                var productId = $(this).data("id");
+                // Lấy số lượng từ ô nhập, nếu có. Nếu không có thì mặc định là 1.
+                var quantity = $(".pro-qty input").val() || 1;
+
+                $.ajax({
+                    url: "{{ route('cart.add') }}",
+                    type: "POST",
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        product_id: productId,
+                        quantity: quantity
+                    },
+                    success: function(response){
+                        // Hiển thị thông báo hoặc cập nhật giỏ hàng header
+                        alert(response.message);
+                        $("#cart-count").text(response.cartTotalQuantity);
+                    },
+                    error: function(xhr){
+                        alert("Có lỗi xảy ra, vui lòng thử lại sau!");
+                    }
+                });
+            });
+        });
+    </script>
 @endsection
