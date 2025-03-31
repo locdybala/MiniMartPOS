@@ -64,10 +64,17 @@ class CartController extends Controller
     // Cập nhật số lượng sản phẩm trong giỏ hàng (nếu cần)
     public function updateCart(Request $request, $id)
     {
+        $quantity = (int) $request->quantity;
+
+        // Đảm bảo số lượng tối thiểu là 1
+        if ($quantity < 1) {
+            return response()->json(['error' => 'Số lượng sản phẩm không hợp lệ!'], 400);
+        }
+
         Cart::update($id, [
             'quantity' => [
                 'relative' => false,
-                'value' => $request->quantity
+                'value' => $quantity
             ]
         ]);
 

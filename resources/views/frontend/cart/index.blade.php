@@ -48,8 +48,7 @@
                                     <td class="shoping__cart__quantity">
                                         <div class="quantity">
                                             <div class="pro-qty">
-                                                <input type="text" class="update-cart" data-id="{{ $item->id }}"
-                                                       value="{{ $item->quantity }}" min="1">
+                                                <input type="number" class="cart-quantity update-cart" data-id="{{ $item->id }}" value="{{ $item->quantity }}" min="1">
                                             </div>
                                         </div>
                                     </td>
@@ -78,8 +77,8 @@
                     <div class="shoping__checkout">
                         <h5>Tổng tiền</h5>
                         <ul>
-                            <li>Subtotal <span>{){ number_format(Cart::getTotal(), 0) }} đ</span></li>
-                            <li>Total <span>{{ number_format(Cart::getTotal(), 0) }} đ</span></li>
+                            <li>Tổng tiền <span>{{ number_format(Cart::getTotal(), 0) }} đ</span></li>
+                            <li>Tổng thanh toán <span>{{ number_format(Cart::getTotal(), 0) }} đ</span></li>
                         </ul>
                         <a href="" class="primary-btn">Thanh toán</a>
                     </div>
@@ -92,27 +91,62 @@
 @section('js')
     <script>
         $(document).ready(function () {
-            $(".update-cart").on("click", function(e){
-                e.preventDefault();
-                var rowId = $(this).data("id"); // Đảm bảo lấy đúng ID từ nút update
-                var quantity = $(this).closest("tr").find(".cart-quantity").val();
+            $(document).ready(function () {
+                var proQty = $('.pro-qty');
+                proQty.prepend('<span class="dec qtybtn">-</span>');
+                proQty.append('<span class="inc qtybtn">+</span>');
 
-                $.ajax({
-                    url: "/cart/update/" + rowId, // Đưa rowId vào URL
-                    type: "POST",
-                    data: {
-                        _token: "{{ csrf_token() }}",
-                        quantity: quantity
-                    },
-                    success: function(response) {
-                        alert(response.message);
-                        location.reload(); // Reload lại trang giỏ hàng
-                    },
-                    error: function(xhr) {
-                        alert("Có lỗi xảy ra, vui lòng thử lại!");
+                proQty.on('click', '.qtybtn', function () {
+                    var $button = $(this);
+                    var input = $button.siblings('input');
+                    var oldValue = parseInt(input.val());
+
+                    if ($button.hasClass('inc')) {
+                        var newVal = oldValue + 1;
+                    } else {
+                        newVal = oldValue > 1 ? oldValue - 1 : 1; // Không cho về 0
                     }
+
+                    input.val(newVal);
+
+                    // Gửi Ajax để cập nhật số lượng trên server
+                    updateCartQuantity(input.data('id'), newVal);
                 });
+
+                // Cập nhật khi nhập số lượng trực tiếp
+                $(".cart-quantity").on("change", function () {
+                    var input = $(this);
+                    var newVal = parseInt(input.val());
+
+                    if (isNaN(newVal) || newVal < 1) {
+                        newVal = 1; // Không cho nhập số < 1
+                    }
+
+                    input.val(newVal);
+                    updateCartQuantity(input.data('id'), newVal);
+                });
+
+                function updateCartQuantity(productId, quantity) {
+                    $.ajax({
+                        url: "{{ route('cart.update') }}",
+                        type: "POST",
+                        data: {
+                            _token: "{{ csrf_token() }}",
+                            id: productId,
+                            quantity: quantity
+                        },
+                        success: function (response) {
+                            alert("Cập nhật giỏ hàng thành công!");
+                            location.reload(); // Reload để cập nhật giá trị giỏ hàng
+                        },
+                        error: function () {
+                            alert("Có lỗi xảy ra, vui lòng thử lại!");
+                        }
+                    });
+                }
             });
+
+
 
             $(".remove-cart").on("click", function(e){
                 e.preventDefault();
