@@ -155,6 +155,13 @@
 
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a  href="{{route('coupons.index')}}">
+                        <i class="fas fa-table"></i>
+                        <p>Quản lý mã giảm giá</p>
+
+                    </a>
+                </li>
             </ul>
         </div>
     </div>

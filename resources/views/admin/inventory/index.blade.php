@@ -6,6 +6,7 @@
         <div class="card">
             <div class="card-body">
                 <table class="table table-bordered">
+                    @include('admin.components.alert')
                     <thead>
                     <tr>
                         <th>#</th>

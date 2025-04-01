@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers\frontend;
 
+use App\Models\Coupon;
 use Illuminate\Http\Request;
 use App\Models\Product;
 use Illuminate\Routing\Controller;
 use Cart;
+use Illuminate\Support\Carbon;
 
 class CartController extends Controller
 {
@@ -55,10 +57,17 @@ class CartController extends Controller
     }
 
     // Xóa sản phẩm khỏi giỏ hàng
-    public function removeFromCart($id)
+    public function remove($id)
     {
         Cart::remove($id);
-        return redirect()->back()->with('success', 'Đã xóa sản phẩm khỏi giỏ hàng!');
+
+        // Tính tổng tiền mới
+        $total = Cart::getTotal();
+
+        return response()->json([
+            'success' => 'Sản phẩm đã được xoá!',
+            'total' => $total
+        ]);
     }
 
     // Cập nhật số lượng sản phẩm trong giỏ hàng (nếu cần)
@@ -79,5 +88,51 @@ class CartController extends Controller
         ]);
 
         return response()->json(['message' => 'Cập nhật giỏ hàng thành công!', 'cart' => Cart::getContent()]);
+    }
+
+    public function applyCoupon(Request $request)
+    {
+        $request->validate([
+            'coupon_code' => 'required|string|max:255',
+        ]);
+
+        $couponCode = $request->input('coupon_code');
+        $coupon = Coupon::where('coupon_code', $couponCode)
+            ->whereDate('coupon_date_start', '<=', Carbon::now()->toDateString())
+            ->whereDate('coupon_date_end', '>=', Carbon::now()->toDateString())
+            ->first();
+
+        if (!$coupon) {
+            return response()->json(['error' => 'Mã giảm giá không hợp lệ hoặc đã hết hạn'], 400);
+        }
+
+        $discount = 0;
+        if ($coupon->coupon_condition == 1) { // Giảm theo %
+            $discount = ($coupon->coupon_number / 100) * Cart::getTotal();
+        } elseif ($coupon->coupon_condition == 2) { // Giảm theo số tiền
+            $discount = $coupon->coupon_number;
+        }
+
+        // Lưu số tiền giảm vào session
+        session(['discount' => $discount]);
+
+        // Tính toán lại tổng tiền
+        $newTotal = Cart::getTotal() + 20000 - $discount;
+
+        return response()->json([
+            'success' => true,
+            'discount' => $discount,
+            'new_total' => $newTotal,
+            'coupon_code' => $coupon->coupon_code
+        ]);
+    }
+
+    public function removeCoupon()
+    {
+        session()->forget('discount'); // Xóa mã giảm giá khỏi session
+        return response()->json([
+            'success' => true,
+            'new_total' => Cart::getTotal() + 20000 // Cập nhật lại tổng thanh toán
+        ]);
     }
 }

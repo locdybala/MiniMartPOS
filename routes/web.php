@@ -19,7 +19,8 @@ use App\Http\Controllers\frontend\PostsController;
 use App\Http\Controllers\frontend\ShopController;
 use App\Http\Controllers\frontend\CustomerAuthController;
 use App\Http\Controllers\frontend\CartController;
-
+use App\Http\Controllers\admin\CouponController;
+use App\Http\Controllers\frontend\CheckoutController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -54,8 +55,18 @@ Route::prefix('cart')->group(function () {
     Route::post('/add', [CartController::class, 'addToCart'])->name('cart.add');
     Route::get('/index', [CartController::class, 'viewCart'])->name('cart.index');
     Route::post('/update/{id}', [CartController::class, 'updateCart'])->name('cart.update');
-    Route::delete('/remove/{id}', [CartController::class, 'removeFromCart'])->name('cart.remove');
+    Route::delete('/remove/{id}', [CartController::class, 'remove'])->name('cart.remove');
+    Route::post('/apply-coupon', [CartController::class, 'applyCoupon'])->name('cart.applyCoupon');
+    Route::post('/remove-coupon', [CartController::class, 'removeCoupon'])->name('cart.removeCoupon');
 });
+Route::prefix('checkout')->group(function () {
+    Route::get('/', [CheckoutController::class, 'index'])->name('checkout');
+    Route::post('/process', [CheckoutController::class, 'process'])->name('checkout.process');
+    Route::get('/success', function() {
+        return view('frontend.checkout.success');
+    })->name('checkout.success');
+});
+
 Route::prefix('admin')->group(function () {
     Route::get('/dashboard', [HomeController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
 
@@ -111,6 +122,8 @@ Route::prefix('admin')->group(function () {
         Route::resource('orders', OrderController::class);
         Route::get('/getCustomers', [CustomerController::class, 'getCustomers']);
         Route::resource('posts', PostController::class);
+
+        Route::resource('admin/coupons', CouponController::class);
     });
 });
 

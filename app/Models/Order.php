@@ -9,15 +9,14 @@ class Order extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['customer_id', 'total_price', 'status'];
+    protected $guarded = [];
 
     public function customer()
     {
         return $this->belongsTo(Customer::class);
     }
-
-    public function orderDetails()
+    public function details()
     {
-        return $this->hasMany(OrderDetail::class);
+        return $this->hasMany(OrderDetails::class);
     }
 }

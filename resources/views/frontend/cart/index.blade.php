@@ -36,30 +36,38 @@
                             </tr>
                             </thead>
                             <tbody>
-                            @foreach(Cart::getContent() as $item)
+                            @if(Cart::isEmpty())
                                 <tr>
-                                    <td class="shoping__cart__item">
-                                        <img src="{{ asset('storage/'.$item->attributes->image) }}" alt="" width="50">
-                                        <h5>{{ $item->name }}</h5>
-                                    </td>
-                                    <td class="shoping__cart__price">
-                                        {{ number_format($item->price, 0) }} đ
-                                    </td>
-                                    <td class="shoping__cart__quantity">
-                                        <div class="quantity">
-                                            <div class="pro-qty">
-                                                <input type="number" class="cart-quantity update-cart" data-id="{{ $item->id }}" value="{{ $item->quantity }}" min="1">
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="shoping__cart__total">
-                                        {{ number_format($item->price * $item->quantity, 0) }} đ
-                                    </td>
-                                    <td class="shoping__cart__item__close">
-                                        <a href="#" data-id="{{ $item->id }}" class="remove-cart"><span class="icon_close"></span></a>
-                                    </td>
+                                    <td colspan="5" class="text-center">Không có sản phẩm trong giỏ hàng</td>
                                 </tr>
-                            @endforeach
+                            @else
+                                @foreach(Cart::getContent() as $item)
+                                    <tr>
+                                        <td class="shoping__cart__item">
+                                            <img src="{{ asset('storage/'.$item->attributes->image) }}" alt="" width="50">
+                                            <h5>{{ $item->name }}</h5>
+                                        </td>
+                                        <td class="shoping__cart__price">
+                                            {{ number_format($item->price, 0) }} đ
+                                        </td>
+                                        <td class="shoping__cart__quantity">
+                                            <div class="quantity">
+                                                <div class="pro-qty">
+                                                    <input type="number" class="cart-quantity update-cart" data-id="{{ $item->id }}" value="{{ $item->quantity }}" min="1">
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="shoping__cart__total">
+                                            {{ number_format($item->price * $item->quantity, 0) }} đ
+                                        </td>
+                                        <td class="shoping__cart__item__close">
+                                            <a href="#" data-id="{{ $item->id }}" class="remove-cart">
+                                                <span class="icon_close"></span>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            @endif
                             </tbody>
                         </table>
                     </div>
@@ -69,18 +77,38 @@
                 <div class="col-lg-12">
                     <div class="shoping__cart__btns">
                         <a href="{{route('frontend.home')}}" class="primary-btn cart-btn">Tiếp tục mua hàng</a>
-
+                        <a href="#" class="primary-btn cart-btn cart-btn-right"><span class="icon_loading"></span>
+                            Cập nhật giỏ hàng</a>
                     </div>
                 </div>
-                <div class="col-lg-6"></div>
+                <div class="col-lg-6">
+                    <div class="shoping__continue">
+                        <div class="shoping__discount">
+                            <h5>Mã giảm giá</h5>
+                            <form id="discount-form">
+                                <input type="text" id="coupon_code" placeholder="Nhập mã giảm giá">
+                                <button type="submit" class="site-btn">Áp dụng mã giảm giá</button>
+                            </form>
+                            <div id="coupon-message"></div>
+                        </div>
+                    </div>
+
+                </div>
                 <div class="col-lg-6">
                     <div class="shoping__checkout">
                         <h5>Tổng tiền</h5>
                         <ul>
-                            <li>Tổng tiền <span>{{ number_format(Cart::getTotal(), 0) }} đ</span></li>
-                            <li>Tổng thanh toán <span>{{ number_format(Cart::getTotal(), 0) }} đ</span></li>
+                            <li>Tổng tiền <span class="cart-total">{{ number_format(Cart::getTotal(), 0) }} đ</span></li>
+                            <li class="li-shipping-fee">Phí vận chuyển <span class="shipping-fee">20,000 đ</span></li>
+                            @if(session('discount'))
+                                <li>Giảm giá <span class="discount-amount">{{ number_format(session('discount'), 0) }} đ</span>
+                                    <button id="remove-coupon" class="btn btn-danger btn-sm">Xóa</button>
+                                </li>
+                            @endif
+
+                            <li>Tổng thanh toán <span class="cart-total-success">{{ number_format(Cart::getTotal() + 20000 - (session('discount') ?? 0), 0) }} đ</span></li>
                         </ul>
-                        <a href="" class="primary-btn">Thanh toán</a>
+                        <a href="{{ route('checkout') }}" class="primary-btn">Thanh toán</a>
                     </div>
                 </div>
             </div>
@@ -93,8 +121,6 @@
         $(document).ready(function () {
             $(document).ready(function () {
                 var proQty = $('.pro-qty');
-                proQty.prepend('<span class="dec qtybtn">-</span>');
-                proQty.append('<span class="inc qtybtn">+</span>');
 
                 proQty.on('click', '.qtybtn', function () {
                     var $button = $(this);
@@ -128,7 +154,7 @@
 
                 function updateCartQuantity(productId, quantity) {
                     $.ajax({
-                        url: "{{ route('cart.update') }}",
+                        url: "/cart/update/" + cartId,
                         type: "POST",
                         data: {
                             _token: "{{ csrf_token() }}",
@@ -148,26 +174,83 @@
 
 
 
-            $(".remove-cart").on("click", function(e){
+            $(".remove-cart").click(function (e) {
                 e.preventDefault();
-                var rowId = $(this).data("id");
+                var productId = $(this).data("id");
 
                 $.ajax({
-                    url: "/cart/remove/" + rowId,
+                    url: "/cart/remove/" + productId,
                     type: "DELETE",
-                    data: {
-                        _token: "{{ csrf_token() }}"
+                    data: { _token: "{{ csrf_token() }}" },
+                    success: function (response) {
+                        alert(response.success);
+
+                        // Xoá hàng hoá khỏi bảng giỏ hàng
+                        $("a[data-id='" + productId + "']").closest("tr").remove();
+
+                        // Cập nhật tổng tiền
+                        $(".cart-total").text(response.total.toLocaleString() + " đ");
                     },
-                    success: function(response) {
-                        alert(response.message);
-                        location.reload(); // Reload lại trang giỏ hàng sau khi xóa
-                    },
-                    error: function(xhr) {
+                    error: function () {
                         alert("Có lỗi xảy ra, vui lòng thử lại!");
                     }
                 });
             });
         });
+        $(document).ready(function () {
+            $("#discount-form").submit(function (e) {
+                e.preventDefault();
+                var couponCode = $("#coupon_code").val();
+
+                $.ajax({
+                    url: "/cart/apply-coupon",
+                    type: "POST",
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        coupon_code: couponCode
+                    },
+                    success: function (response) {
+                        alert("Áp dụng mã giảm giá thành công!");
+
+                        // Cập nhật giao diện
+                        if ($(".discount-amount").length) {
+                            $(".discount-amount").text(response.discount.toLocaleString() + " đ");
+                        } else {
+                            $(".li-shipping-fee").after(`<li>Giảm giá <span class="discount-amount">${response.discount.toLocaleString()} đ</span><button id="remove-coupon" class="btn btn-danger btn-sm">Xóa</button></li>`);
+                        }
+
+                        $(".cart-total-success").text(response.new_total.toLocaleString() + " đ");
+                    },
+                    error: function (xhr) {
+                        alert(xhr.responseJSON.error);
+                    }
+                });
+            });
+        });
+        $(document).ready(function () {
+            $("#remove-coupon").click(function (e) {
+                e.preventDefault();
+
+                $.ajax({
+                    url: "/cart/remove-coupon",
+                    type: "POST",
+                    data: { _token: "{{ csrf_token() }}" },
+                    success: function (response) {
+                        alert("Đã xóa mã giảm giá!");
+
+                        // Xóa phần hiển thị giảm giá
+                        $(".discount-amount").closest("li").remove();
+
+                        // Cập nhật lại tổng tiền
+                        $(".cart-total-success").text(response.new_total.toLocaleString() + " đ");
+                    },
+                    error: function () {
+                        alert("Có lỗi xảy ra, vui lòng thử lại!");
+                    }
+                });
+            });
+        });
+
     </script>
 
 @endsection

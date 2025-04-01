@@ -26,6 +26,7 @@
                                 id="add-row"
                                 class="display table table-striped table-hover"
                             >
+                                @include('admin.components.alert')
                                 <thead>
                                 <tr>
                                     <th>Mã phiếu</th>

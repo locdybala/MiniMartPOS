@@ -18,6 +18,7 @@
             <div class="card-body">
                 <div class="table-responsive">
                     <table class="table table-striped">
+                        @include('admin.components.alert')
                         <thead>
                         <tr>
                             <th>ID</th>

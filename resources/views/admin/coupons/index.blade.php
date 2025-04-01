@@ -1,8 +1,9 @@
 @extends('admin.layouts.admin-layout')
+
 @section('content')
     <div class="page-inner">
         @php
-            $title = 'Bài viết';
+            $title = 'Mã giảm giá';
             $i = 0;
             $action = 'Danh sách';
         @endphp
@@ -13,9 +14,8 @@
                     <div class="card-header">
                         <div class="d-flex align-items-center">
                             <h4 class="card-title">Quản lý {{$title}}</h4>
-                            <a href="{{ route('posts.create') }}" class="btn btn-primary btn-round ms-auto">
-                                <i class="fa fa-plus"></i>
-                                Thêm mới
+                            <a href="{{ route('coupons.create') }}" class="btn btn-primary btn-round ms-auto">
+                                <i class="fa fa-plus"></i> Thêm mới
                             </a>
                         </div>
                     </div>
@@ -26,49 +26,48 @@
                                 <thead>
                                 <tr>
                                     <th>STT</th>
-                                    <th>Tiêu đề</th>
-                                    <th>Hình ảnh</th>
-                                    <th>Trạng thái</th>
-                                    <th>Ngày tạo</th>
-                                    <th style="width: 15%">Thao tác</th>
+                                    <th>Tên mã giảm giá</th>
+                                    <th>Mã giảm giá</th>
+                                    <th>Điều kiện</th>
+                                    <th>Ngày bắt đầu</th>
+                                    <th>Ngày kết thúc</th>
+                                    <th>Thao tác</th>
                                 </tr>
                                 </thead>
                                 <tfoot>
                                 <tr>
                                     <th>STT</th>
-                                    <th>Tiêu đề</th>
-                                    <th>Hình ảnh</th>
-                                    <th>Trạng thái</th>
-                                    <th>Ngày tạo</th>
+                                    <th>Tên mã giảm giá</th>
+                                    <th>Mã giảm giá</th>
+                                    <th>Điều kiện</th>
+                                    <th>Ngày bắt đầu</th>
+                                    <th>Ngày kết thúc</th>
                                     <th>Thao tác</th>
                                 </tr>
                                 </tfoot>
                                 <tbody>
-                                @foreach($posts as $post)
+                                @foreach($coupons as $coupon)
                                     @php $i++; @endphp
                                     <tr>
                                         <td>{{ $i }}</td>
-                                        <td>{{ $post->title }}</td>
-                                        <td><img src="{{ asset('uploads/posts/' . $post->image) }}" width="80" alt="{{ $post->title }}"></td>
+                                        <td>{{ $coupon->coupon_name }}</td>
+                                        <td>{{ $coupon->coupon_code }}</td>
                                         <td>
-                                            @if($post->status == 1)
-                                                <span class="badge bg-success">Hiển thị</span>
+                                            @if($coupon->coupon_condition == 1)
+                                                Giảm theo %
                                             @else
-                                                <span class="badge bg-danger">Ẩn</span>
+                                                Giảm theo tiền
                                             @endif
                                         </td>
-                                        <td>{{ $post->created_at->format('d/m/Y') }}</td>
+                                        <td>{{ $coupon->coupon_date_start }}</td>
+                                        <td>{{ $coupon->coupon_date_end }}</td>
                                         <td>
                                             <div class="form-button-action">
-                                                <a href="{{ route('posts.edit', $post->id) }}" class="btn btn-link btn-primary">
-                                                    <i class="fa fa-edit"></i>
-                                                </a>
-                                                <form action="{{ route('posts.destroy', $post->id) }}" method="POST" style="display:inline;">
+                                                <a href="{{ route('coupons.edit', $coupon) }}" class="btn btn-link btn-primary btn-lg"><i class="fa fa-edit"></i></a>
+                                                <form action="{{ route('coupons.destroy', $coupon) }}" method="POST" style="display:inline;">
                                                     @csrf
                                                     @method('DELETE')
-                                                    <button type="submit" class="btn btn-link btn-danger" onclick="return confirm('Bạn có chắc muốn xóa?')">
-                                                        <i class="fa fa-times"></i>
-                                                    </button>
+                                                    <button type="submit" class="btn btn-link btn-danger deleteCoupon" data-id="{{ $coupon->id }}"><i class="fa fa-times"></i></button>
                                                 </form>
                                             </div>
                                         </td>

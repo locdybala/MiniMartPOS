@@ -64,6 +64,7 @@
 
                         <div class="table-responsive">
                             <table id="group-table" class="display table table-striped table-hover">
+                                @include('admin.components.alert')
                                 <thead>
                                 <tr>
                                     <th>STT</th>

@@ -117,6 +117,7 @@
                                 id="add-row"
                                 class="display table table-striped table-hover"
                             >
+                                @include('admin.components.alert')
                                 <thead>
                                 <tr>
                                     <th>STT</th>
