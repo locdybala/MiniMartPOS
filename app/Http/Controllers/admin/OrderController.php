@@ -154,7 +154,9 @@ class OrderController extends Controller
                 'product_id' => $item['id'],
                 'quantity' => $item['quantity'],
                 'price' => $item['price'],
-                'total' => $item['price'] * $item['quantity'],
+                'subtotal' => $item['price'] * $item['quantity'],
+                'product_name' => $item['name'],
+                'product_image' => $product->images->first()->image_path
             ]);
         }
 
