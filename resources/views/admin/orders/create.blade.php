@@ -69,9 +69,9 @@
                                 <div class="mb-3">
                                     <label class="form-label">Hình thức thanh toán:</label>
                                     <div>
-                                        <input type="radio" id="cash" name="paymentMethod" value="cash" checked>
+                                        <input type="radio" id="cash" name="paymentMethod" value="cod" checked>
                                         <label for="cod">Tiền mặt</label>
-                                        <input type="radio" id="transfer" name="paymentMethod" value="transfer">
+                                        <input type="radio" id="transfer" name="paymentMethod" value="vnpay">
                                         <label for="vnpay">Chuyển khoản</label>
                                     </div>
                                 </div>
@@ -211,34 +211,31 @@
                 return;
             }
 
-            // Tạo đối tượng đơn hàng
-            let order = {
-                customer_name: customerName,
-                customer_phone: customerPhone,
-                total_amount: totalAmount,
-                discount: discount,
-                final_amount: finalAmount,
-                payment_method: paymentMethod,
-                customer_paid: customerPaid,
-                change_amount: changeAmount,
-                items: orderItems,
-                _token: "{{ csrf_token() }}"
-            };
 
             // Gửi dữ liệu thanh toán đến server (Lưu đơn hàng vào database) bằng jQuery AJAX
             $.ajax({
                 url: '{{ route("orders.checkout") }}',
                 type: 'POST',
-                data: JSON.stringify(order),
-                contentType: 'application/json',
-                success: function(data) {
-                    if (data.success) {
+                data: {
+                    customer_name: customerName,
+                    total_amount: totalAmount,
+                    discount: discount,
+                    final_amount: finalAmount,
+                    payment_method: paymentMethod,
+                    customer_paid: customerPaid,
+                    change_amount: changeAmount,
+                    items: orderItems,
+                    _token: "{{ csrf_token() }}"
+                },
+
+                success: function(response) {
+                    if (response.success) {
                         alert('Đơn hàng đã được thanh toán thành công!');
                         // Làm mới lại giao diện (hoặc chuyển hướng, làm gì đó sau khi thanh toán thành công)
                         localStorage.removeItem('orderItems'); // Xóa giỏ hàng sau khi thanh toán
                         window.location.reload(); // Tải lại trang hoặc chuyển hướng
                     } else {
-                        alert('Có lỗi xảy ra trong quá trình thanh toán!');
+                        alert(data.message);
                     }
                 },
                 error: function(error) {

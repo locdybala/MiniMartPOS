@@ -9,6 +9,7 @@ use App\Models\Customer;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class OrderController extends Controller
 {
@@ -108,47 +109,49 @@ class OrderController extends Controller
 
     public function checkout(Request $request)
     {
-        // Lấy thông tin từ request (hoặc modal)
+        Log::info($request->all());
+        // Lấy dữ liệu từ request
         $customerName = 'Khách lẻ'; // Giả sử khách mua tại cửa hàng
-        $customerPhone = '';  // Không cần số điện thoại cho khách lẻ
-        $totalAmount = $request->input('total_amount'); // Tổng tiền hàng
-        $discount = $request->input('discount'); // Giảm giá
+        $totalAmount = $request->total_amount; // Tổng tiền hàng
+        $discount = $request->discount; // Giảm giá
         $finalAmount = $totalAmount - $discount; // Số tiền khách cần trả
 
-        $paymentMethod = $request->input('payment_method'); // Phương thức thanh toán
-        $customerPaid = $request->input('customer_paid'); // Tiền khách đưa
+        $paymentMethod = $request->payment_method; // Phương thức thanh toán
+        $customerPaid = $request->customer_paid; // Tiền khách đưa
         $changeAmount = $customerPaid - $finalAmount; // Tiền thừa trả khách
 
-        // Lấy thông tin các sản phẩm trong đơn hàng (dữ liệu từ client)
-        $orderItems = $request->input('items'); // Đây là mảng các sản phẩm đã chọn
+        // Lấy thông tin các sản phẩm trong đơn hàng
+        $orderItems = $request->items;
 
         if (empty($orderItems)) {
             return response()->json(['success' => false, 'message' => 'Chưa có sản phẩm trong đơn hàng!']);
         }
 
-        // Tạo đối tượng đơn hàng và lưu vào database
+        // Tạo đơn hàng
         $order = new Order();
         $order->customer_name = $customerName;
-        $order->customer_phone = $customerPhone;  // Không yêu cầu số điện thoại cho khách lẻ
-        $order->total_price = $totalAmount; // Tổng tiền
-        $order->discount_amount = $discount; // Giảm giá
-        $order->final_total = $finalAmount; // Số tiền khách phải trả
-        $order->payment_method = $paymentMethod; // Phương thức thanh toán
-        $order->payment_status = $customerPaid >= $finalAmount ? 'paid' : 'unpaid'; // Trạng thái thanh toán
-        $order->transaction_id = 'TXN' . rand(1000, 9999); // Giả sử bạn tạo mã giao dịch ngẫu nhiên
-        $order->shipping_fee = 0; // Phí vận chuyển (có thể thay đổi nếu cần)
-        $order->note = 'Khách lẻ mua trực tiếp tại cửa hàng'; // Ghi chú
-        $order->created_at = now();
-        $order->updated_at = now();
-
-        // Lưu đơn hàng vào cơ sở dữ liệu
+        $order->status = "completed";
+        $order->payment_method = $paymentMethod;
+        $order->payment_status = $customerPaid >= $finalAmount ? 'paid' : 'unpaid';
+        $order->discount_amount = $discount;
+        $order->total_price = $totalAmount;
+        $order->final_total = $finalAmount;
+        $order->transaction_id = 'TXN' . rand(1000, 9999);
+        $order->shipping_fee = 0;
+        $order->note = 'Khách lẻ mua trực tiếp tại cửa hàng';
         $order->save();
 
-        // Lưu chi tiết đơn hàng (order details)
         foreach ($orderItems as $item) {
-            OrderDetail::create([
+            // Kiểm tra sản phẩm có tồn tại trong cơ sở dữ liệu không
+            $product = Product::find($item['id']);
+            if (!$product) {
+                return response()->json(['success' => false, 'message' => 'Sản phẩm ID ' . $item['id'] . ' không tồn tại!']);
+            }
+
+            // Lưu chi tiết đơn hàng
+            OrderDetails::create([
                 'order_id' => $order->id,
-                'product_id' => $item['product_id'],
+                'product_id' => $item['id'],
                 'quantity' => $item['quantity'],
                 'price' => $item['price'],
                 'total' => $item['price'] * $item['quantity'],
@@ -161,4 +164,5 @@ class OrderController extends Controller
             'order_id' => $order->id,
         ]);
     }
+
 }
