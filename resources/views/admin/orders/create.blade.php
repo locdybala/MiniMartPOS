@@ -70,9 +70,9 @@
                                     <label class="form-label">Hình thức thanh toán:</label>
                                     <div>
                                         <input type="radio" id="cash" name="paymentMethod" value="cash" checked>
-                                        <label for="cash">Tiền mặt</label>
+                                        <label for="cod">Tiền mặt</label>
                                         <input type="radio" id="transfer" name="paymentMethod" value="transfer">
-                                        <label for="transfer">Chuyển khoản</label>
+                                        <label for="vnpay">Chuyển khoản</label>
                                     </div>
                                 </div>
 
@@ -187,12 +187,67 @@
         }
 
         function confirmPayment() {
-            alert("Thanh toán thành công!");
-            orderItems = [];
-            renderOrder();
-            let modal = bootstrap.Modal.getInstance(document.getElementById('confirmPaymentModal'));
-            modal.hide();
+            debugger;
+            // Lấy thông tin khách hàng từ modal
+            let customerName = $('#customerName').text();
+            let totalAmount = parseInt($('#totalAmount').text().replace(' VNĐ', '').replace(',', ''));
+            let discount = parseInt($('#discount').val());
+            let finalAmount = totalAmount - discount; // Số tiền khách hàng cần trả
+
+            // Lấy phương thức thanh toán
+            let paymentMethod = $('input[name="paymentMethod"]:checked').val();
+
+            // Số tiền khách đưa
+            let customerPaid = parseInt($('#customerPaid').val());
+            let changeAmount = customerPaid - finalAmount;
+
+            // Kiểm tra nếu tiền khách đưa không đủ
+            if (customerPaid < finalAmount) {
+                alert('Số tiền khách đưa không đủ!');
+                return;
+            }
+            if (typeof orderItems === 'undefined' || orderItems.length === 0) {
+                alert('Chưa có sản phẩm trong đơn hàng!');
+                return;
+            }
+
+            // Tạo đối tượng đơn hàng
+            let order = {
+                customer_name: customerName,
+                customer_phone: customerPhone,
+                total_amount: totalAmount,
+                discount: discount,
+                final_amount: finalAmount,
+                payment_method: paymentMethod,
+                customer_paid: customerPaid,
+                change_amount: changeAmount,
+                items: orderItems,
+                _token: "{{ csrf_token() }}"
+            };
+
+            // Gửi dữ liệu thanh toán đến server (Lưu đơn hàng vào database) bằng jQuery AJAX
+            $.ajax({
+                url: '{{ route("orders.checkout") }}',
+                type: 'POST',
+                data: JSON.stringify(order),
+                contentType: 'application/json',
+                success: function(data) {
+                    if (data.success) {
+                        alert('Đơn hàng đã được thanh toán thành công!');
+                        // Làm mới lại giao diện (hoặc chuyển hướng, làm gì đó sau khi thanh toán thành công)
+                        localStorage.removeItem('orderItems'); // Xóa giỏ hàng sau khi thanh toán
+                        window.location.reload(); // Tải lại trang hoặc chuyển hướng
+                    } else {
+                        alert('Có lỗi xảy ra trong quá trình thanh toán!');
+                    }
+                },
+                error: function(error) {
+                    console.error('Error:', error);
+                    alert('Có lỗi xảy ra, vui lòng thử lại!');
+                }
+            });
         }
+
 
 
         function newOrder() {

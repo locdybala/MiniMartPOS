@@ -124,6 +124,10 @@ Route::prefix('admin')->group(function () {
         Route::resource('posts', PostController::class);
 
         Route::resource('admin/coupons', CouponController::class);
+        Route::get('orders/{id}/edit-status', [OrderController::class, 'editStatus'])->name('orders.edit-status');
+        Route::put('orders/{id}/update-status', [OrderController::class, 'updateStatus'])->name('orders.update-status');
+        Route::post('checkout', [OrderController::class, 'checkout'])->name('orders.checkout');
+
     });
 });
 

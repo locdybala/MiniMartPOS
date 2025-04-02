@@ -108,7 +108,11 @@
 
                             <li>Tổng thanh toán <span class="cart-total-success">{{ number_format(Cart::getTotal() + 20000 - (session('discount') ?? 0), 0) }} đ</span></li>
                         </ul>
+                        @if(Auth::guard('customer')->check())
                         <a href="{{ route('checkout') }}" class="primary-btn">Thanh toán</a>
+                            @else
+                            <a href="{{ route('customer.login') }}" class="primary-btn">Thanh toán</a>
+                        @endif
                     </div>
                 </div>
             </div>
