@@ -48,7 +48,11 @@
                     <tr><th>Giảm giá</th><td>-{{ number_format($order->discount, 0, ',', '.') }} VNĐ</td></tr>
                     <tr><th>Phí vận chuyển</th><td>{{ number_format(20000, 0, ',', '.') }} VNĐ</td></tr>
                     <tr class="fw-bold text-danger"><th>Tổng thanh toán</th><td>{{ number_format($order->total_price, 0, ',', '.') }} VNĐ</td></tr>
+
                 </table>
+                <a href="{{ route('orders.invoice', $order->id) }}" class="btn btn-primary mt-2">
+                    📄 Xuất hóa đơn PDF
+                </a>
             </div>
         </div>
     </div>

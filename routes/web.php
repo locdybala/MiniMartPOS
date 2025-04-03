@@ -127,7 +127,7 @@ Route::prefix('admin')->group(function () {
         Route::get('orders/{id}/edit-status', [OrderController::class, 'editStatus'])->name('orders.edit-status');
         Route::put('orders/{id}/update-status', [OrderController::class, 'updateStatus'])->name('orders.update-status');
         Route::post('checkout', [OrderController::class, 'checkout'])->name('orders.checkout');
-
+        Route::get('/orders/{order}/invoice', [OrderController::class, 'generateInvoice'])->name('orders.invoice');
     });
 });
 

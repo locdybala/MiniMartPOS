@@ -10,7 +10,7 @@ use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-
+use Barryvdh\DomPDF\Facade\Pdf;
 class OrderController extends Controller
 {
     public function index()
@@ -129,6 +129,7 @@ class OrderController extends Controller
 
         // Tạo đơn hàng
         $order = new Order();
+        $order->customer_id = 1;
         $order->customer_name = $customerName;
         $order->status = "completed";
         $order->payment_method = $paymentMethod;
@@ -158,6 +159,11 @@ class OrderController extends Controller
                 'product_name' => $item['name'],
                 'product_image' => $product->images->first()->image_path
             ]);
+
+            // Cập nhật tồn kho sản phẩm
+            $product = Product::find($item['id']);
+            $product->stock -= $item['quantity'];
+            $product->save();
         }
 
         return response()->json([
@@ -165,6 +171,13 @@ class OrderController extends Controller
             'message' => 'Đơn hàng đã được thanh toán thành công!',
             'order_id' => $order->id,
         ]);
+    }
+
+    public function generateInvoice(Order $order)
+    {
+        $order->load('details'); // Load quan hệ để tránh null
+        $pdf = Pdf::loadView('admin.orders.invoice', compact('order'));
+        return $pdf->download('invoice_'.$order->id.'.pdf');
     }
 
 }
