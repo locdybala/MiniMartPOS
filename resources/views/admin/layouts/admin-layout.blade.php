@@ -333,7 +333,7 @@
                     `);
                 });
 
-                $(".notification").text(data.products.length).show(); // Hiển thị số lượng thông báo
+                $(".notificationCount").text(data.products.length).show(); // Hiển thị số lượng thông báo
             } else {
                 notifList.append('<p class="text-center text-muted">Không có sản phẩm sắp hết hàng.</p>');
                 $(".notification").hide(); // Ẩn số lượng thông báo

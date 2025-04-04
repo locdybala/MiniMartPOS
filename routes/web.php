@@ -21,6 +21,7 @@ use App\Http\Controllers\frontend\CustomerAuthController;
 use App\Http\Controllers\frontend\CartController;
 use App\Http\Controllers\admin\CouponController;
 use App\Http\Controllers\frontend\CheckoutController;
+use App\Http\Controllers\admin\UserController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -72,7 +73,7 @@ Route::prefix('admin')->group(function () {
 
     Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
     Route::post('/login', [LoginController::class, 'login']);
-    Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+    Route::post('/logout', [LoginController::class, 'logout'])->name('admin.logout');
 
     Route::middleware('auth')->group(function () {
         Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -128,6 +129,9 @@ Route::prefix('admin')->group(function () {
         Route::put('orders/{id}/update-status', [OrderController::class, 'updateStatus'])->name('orders.update-status');
         Route::post('checkout', [OrderController::class, 'checkout'])->name('orders.checkout');
         Route::get('/orders/{order}/invoice', [OrderController::class, 'generateInvoice'])->name('orders.invoice');
+        Route::get('/statistics-data', [HomeController::class, 'getStatisticsData'])->name('statistics.data');
+
+        Route::resource('users', UserController::class);
     });
 });
 
