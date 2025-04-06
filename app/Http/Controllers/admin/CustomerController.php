@@ -11,13 +11,13 @@ class CustomerController extends Controller
     public function index()
     {
         $customers = Customer::all();
-        return view('admin.customer.index', compact('customers'));
+        return view('admin.customers.index', compact('customers'));
     }
 
     public function create()
     {
         $customerGroups= CustomerGroup::all();
-        return view('admin.customer.create',compact('customerGroups'));
+        return view('admin.customers.create',compact('customerGroups'));
     }
 
     public function store(Request $request)
@@ -36,7 +36,7 @@ class CustomerController extends Controller
     public function edit(Customer $customer)
     {
         $customerGroups= CustomerGroup::all();
-        return view('admin.customer.create', compact('customer', 'customerGroups'));
+        return view('admin.customers.create', compact('customer', 'customerGroups'));
     }
 
     public function update(Request $request, Customer $customer)

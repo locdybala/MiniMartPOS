@@ -27,13 +27,8 @@
     <div class="sidebar-wrapper scrollbar scrollbar-inner">
         <div class="sidebar-content">
             <ul class="nav nav-secondary">
-                <li class="nav-item active">
-                    <a
-                        data-bs-toggle="collapse"
-                        href="fb.com"
-                        class="collapsed"
-                        aria-expanded="false"
-                    >
+                <li class="nav-item">
+                    <a  href="{{route('dashboard')}}">
                         <i class="fas fa-home"></i>
                         <p>Trang chủ</p>
                     </a>
@@ -70,16 +65,6 @@
                             <li>
                                 <a href="{{ route('products.index') }}">
                                     <span class="sub-item">Sản phẩm</span>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="{{ route('import-orders.index') }}">
-                                    <span class="sub-item">Phiếu nhập</span>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="{{ route('inventory.index') }}">
-                                    <span class="sub-item">Tồn kho</span>
                                 </a>
                             </li>
                         </ul>
@@ -136,13 +121,13 @@
                     <div class="collapse" id="tables">
                         <ul class="nav nav-collapse">
                             <li>
-                                <a href="tables/tables.html">
+                                <a href="{{ route('import-orders.index') }}">
                                     <span class="sub-item">Nhập kho</span>
                                 </a>
                             </li>
                             <li>
-                                <a href="tables/datatables.html">
-                                    <span class="sub-item">Datatables</span>
+                                <a href="{{ route('inventory.index') }}">
+                                    <span class="sub-item">Tồn kho</span>
                                 </a>
                             </li>
                         </ul>
@@ -150,15 +135,22 @@
                 </li>
                 <li class="nav-item">
                     <a  href="{{route('posts.index')}}">
-                        <i class="fas fa-table"></i>
+                        <i class="fas fa-book"></i>
                         <p>Quản lý bài viết</p>
 
                     </a>
                 </li>
                 <li class="nav-item">
                     <a  href="{{route('coupons.index')}}">
-                        <i class="fas fa-table"></i>
+                        <i class="fas fa-couch"></i>
                         <p>Quản lý mã giảm giá</p>
+
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a  href="{{route('users.index')}}">
+                        <i class="fas fa-user"></i>
+                        <p>Quản lý tài khoản</p>
 
                     </a>
                 </li>

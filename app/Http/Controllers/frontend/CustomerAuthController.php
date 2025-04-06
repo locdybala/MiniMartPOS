@@ -25,6 +25,9 @@ class CustomerAuthController extends Controller
         ]);
 
         if (Auth::guard('customer')->attempt($credentials)) {
+// Cập nhật thời gian hoạt động của người dùng
+            $user = Auth::guard('customer')->user();
+            $user->update(['last_activity' => now()]);
             return redirect()->route('frontend.home')->with('success', 'Đăng nhập thành công');
         }
 
