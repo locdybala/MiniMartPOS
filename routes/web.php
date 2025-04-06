@@ -34,6 +34,7 @@ use App\Http\Controllers\frontend\CheckoutController;
 
 Route::get('/', [FrontendController::class, 'index'])->name('frontend.home');
 Route::get('/posts', [PostsController::class, 'index'])->name('posts_index');
+Route::get('posts/detail', [PostsController::class, 'detail'])->name('post.detail');
 Route::get('/contact', [FrontendController::class, 'contact'])->name('contact');
 Route::get('/products/{id}', [ShopController::class, 'productDetails'])->name('product.details');
 Route::get('/shop', [ShopController::class, 'index'])->name('shop.index');

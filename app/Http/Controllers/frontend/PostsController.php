@@ -13,4 +13,12 @@ class PostsController extends Controller
         $posts = Post::latest()->paginate(6);
         return view('frontend.posts.index', compact('posts'));
     }
+
+    public function detail(Request $request)
+    {
+        $slug = $request->query('slug');
+        $post = Post::where('slug', $slug)->where('status', 1)->firstOrFail(); // chỉ lấy bài đang kích hoạt
+
+        return view('frontend.posts.detail', compact('post'));
+    }
 }

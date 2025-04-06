@@ -34,14 +34,12 @@ class PostController extends Controller
             'title' => 'required|string|max:255',
             'contents' => 'required',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'status' => 'required|integer|in:0,1',
         ]);
-
         $post = new Post();
         $post->title = $request->title;
         $post->slug = Str::slug($request->title);
         $post->content = $request->contents;
-        $post->status = $request->status;
+        $post->status = $request->has('status') ? 1 : 0;
 
         // Upload ảnh nếu có
         if ($request->hasFile('image')) {
@@ -68,7 +66,7 @@ class PostController extends Controller
     public function edit(string $id)
     {
         $post = Post::findOrFail($id);
-        return view('admin.posts.form', compact('post'));
+        return view('admin.posts.create', compact('post'));
     }
 
     /**
@@ -80,14 +78,13 @@ class PostController extends Controller
             'title' => 'required|string|max:255',
             'contents' => 'required',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'status' => 'required|integer|in:0,1',
         ]);
 
         $post = Post::findOrFail($id);
         $post->title = $request->title;
         $post->slug = Str::slug($request->title);
         $post->content = $request->contents;
-        $post->status = $request->status;
+        $post->status = $request->has('status') ? 1 : 0;
 
         // Cập nhật ảnh nếu có
         if ($request->hasFile('image')) {
