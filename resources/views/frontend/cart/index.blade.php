@@ -166,11 +166,11 @@
                             quantity: quantity
                         },
                         success: function (response) {
-                            alert("Cập nhật giỏ hàng thành công!");
+                            toastr['success']("Cập nhật giỏ hàng thành công!");
                             location.reload(); // Reload để cập nhật giá trị giỏ hàng
                         },
                         error: function () {
-                            alert("Có lỗi xảy ra, vui lòng thử lại!");
+                            toastr["error"]("Có lỗi xảy ra, vui lòng thử lại!");
                         }
                     });
                 }
@@ -187,7 +187,7 @@
                     type: "DELETE",
                     data: { _token: "{{ csrf_token() }}" },
                     success: function (response) {
-                        alert(response.success);
+                        toastr["success"](response.success);
 
                         // Xoá hàng hoá khỏi bảng giỏ hàng
                         $("a[data-id='" + productId + "']").closest("tr").remove();
@@ -196,7 +196,7 @@
                         $(".cart-total").text(response.total.toLocaleString() + " đ");
                     },
                     error: function () {
-                        alert("Có lỗi xảy ra, vui lòng thử lại!");
+                        toastr["error"]("Có lỗi xảy ra, vui lòng thử lại!");
                     }
                 });
             });
@@ -214,7 +214,7 @@
                         coupon_code: couponCode
                     },
                     success: function (response) {
-                        alert("Áp dụng mã giảm giá thành công!");
+                        toastr["success"]("Áp dụng mã giảm giá thành công!");
 
                         // Cập nhật giao diện
                         if ($(".discount-amount").length) {
@@ -226,7 +226,7 @@
                         $(".cart-total-success").text(response.new_total.toLocaleString() + " đ");
                     },
                     error: function (xhr) {
-                        alert(xhr.responseJSON.error);
+                        toastr["error"](xhr.responseJSON.error);
                     }
                 });
             });
@@ -240,7 +240,7 @@
                     type: "POST",
                     data: { _token: "{{ csrf_token() }}" },
                     success: function (response) {
-                        alert("Đã xóa mã giảm giá!");
+                        toastr["success"]("Đã xóa mã giảm giá!");
 
                         // Xóa phần hiển thị giảm giá
                         $(".discount-amount").closest("li").remove();
@@ -249,7 +249,7 @@
                         $(".cart-total-success").text(response.new_total.toLocaleString() + " đ");
                     },
                     error: function () {
-                        alert("Có lỗi xảy ra, vui lòng thử lại!");
+                        toastr["error"]("Có lỗi xảy ra, vui lòng thử lại!");
                     }
                 });
             });

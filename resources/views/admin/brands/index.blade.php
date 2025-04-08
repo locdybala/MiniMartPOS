@@ -381,7 +381,7 @@
                     },
                     error: function (error) {
                         console.log(error);
-                        alert("Có lỗi xảy ra, vui lòng thử lại!");
+                        toastr["error"]("Có lỗi xảy ra, vui lòng thử lại!");
                     }
                 });
             }

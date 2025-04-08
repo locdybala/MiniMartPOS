@@ -28,31 +28,33 @@
             </div>
             <div class="checkout__form">
                 <h4>Thông Tin Thanh Toán</h4>
+                @php $customer = \Illuminate\Support\Facades\Auth::guard('customer')->user(); @endphp
                 <form action="{{ route('checkout.process') }}" method="POST">
                     @csrf
                     <div class="row">
                         <div class="col-lg-8 col-md-6">
                             <div class="checkout__input">
                                 <p>Họ và Tên<span>*</span></p>
-                                <input type="text" name="customer_name" required>
+                                <input type="text" name="customer_name" value="{{ old('customer_name', $customer->name ?? '') }}" required>
                             </div>
                             <div class="checkout__input">
                                 <p>Email<span>*</span></p>
-                                <input type="email" name="customer_email" required>
+                                <input type="email" name="customer_email" value="{{ old('customer_email', $customer->email ?? '') }}" required>
                             </div>
                             <div class="checkout__input">
                                 <p>Số Điện Thoại<span>*</span></p>
-                                <input type="text" name="customer_phone" required>
+                                <input type="text" name="customer_phone" value="{{ old('customer_phone', $customer->phone ?? '') }}" required>
                             </div>
                             <div class="checkout__input">
                                 <p>Địa Chỉ<span>*</span></p>
-                                <input type="text" name="customer_address" required>
+                                <input type="text" name="customer_address" value="{{ old('customer_address', $customer->address ?? '') }}" required>
                             </div>
                             <div class="checkout__input">
                                 <p>Ghi chú đơn hàng</p>
-                                <textarea name="order_notes" rows="3"></textarea>
+                                <textarea name="order_notes" class="form-control" rows="3">{{ old('order_notes') }}</textarea>
                             </div>
                         </div>
+
                         <div class="col-lg-4 col-md-6">
                             <div class="checkout__order">
                                 <h4>Đơn Hàng Của Bạn</h4>
@@ -76,25 +78,25 @@
                                 </div>
                                 <div class="checkout__input__radio">
                                     <label for="vnpay">
-                                        VNPAY
-                                        <input type="radio" id="vnpay" name="payment_method" value="vnpay">
+                                        Thanh toán online (VNPAY)
+                                        <input type="radio" id="online_payment" name="payment_method" value="online_payment">
                                         <span class="checkmark"></span>
                                     </label>
                                 </div>
-                                <div class="checkout__input__radio">
-                                    <label for="momo">
-                                        MOMO
-                                        <input type="radio" id="momo" name="payment_method" value="momo">
-                                        <span class="checkmark"></span>
-                                    </label>
-                                </div>
-                                <div class="checkout__input__radio">
-                                    <label for="paypal">
-                                        PayPal
-                                        <input type="radio" id="paypal" name="payment_method" value="paypal">
-                                        <span class="checkmark"></span>
-                                    </label>
-                                </div>
+{{--                                <div class="checkout__input__radio">--}}
+{{--                                    <label for="momo">--}}
+{{--                                        MOMO--}}
+{{--                                        <input type="radio" id="momo" name="payment_method" value="momo">--}}
+{{--                                        <span class="checkmark"></span>--}}
+{{--                                    </label>--}}
+{{--                                </div>--}}
+{{--                                <div class="checkout__input__radio">--}}
+{{--                                    <label for="paypal">--}}
+{{--                                        PayPal--}}
+{{--                                        <input type="radio" id="paypal" name="payment_method" value="paypal">--}}
+{{--                                        <span class="checkmark"></span>--}}
+{{--                                    </label>--}}
+{{--                                </div>--}}
                                 <button type="submit" class="site-btn">ĐẶT HÀNG</button>
                             </div>
                         </div>

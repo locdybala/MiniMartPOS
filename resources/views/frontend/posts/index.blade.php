@@ -24,7 +24,7 @@
                         <div class="col-lg-6 col-md-6 col-sm-6">
                             <div class="blog__item">
                                 <div class="blog__item__pic">
-                                    <img src="{{ asset('uploads/posts/' . $post->image) }}" alt="{{ $post->title }}">
+                                    <img style="width: 550px; height: 370px;" src="{{ asset('storage/' . $post->image) }}" alt="{{ $post->title }}">
                                 </div>
                                 <div class="blog__item__text">
                                     <ul>
@@ -33,7 +33,7 @@
                                     </ul>
                                     <h5><a href="#">{{ $post->title }}</a></h5>
                                     <p>{{ Str::limit($post->excerpt, 100) }}</p>
-                                    <a href="#" class="blog__btn">READ MORE <span class="arrow_right"></span></a>
+                                    <a href="{{ route('post.detail', ['slug' => $post->slug]) }}" class="blog__btn">Xem thêm <span class="arrow_right"></span></a>
                                 </div>
                             </div>
                         </div>

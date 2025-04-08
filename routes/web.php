@@ -35,6 +35,7 @@ use App\Http\Controllers\admin\UserController;
 
 Route::get('/', [FrontendController::class, 'index'])->name('frontend.home');
 Route::get('/posts', [PostsController::class, 'index'])->name('posts_index');
+Route::get('posts/detail', [PostsController::class, 'detail'])->name('post.detail');
 Route::get('/contact', [FrontendController::class, 'contact'])->name('contact');
 Route::get('/products/{id}', [ShopController::class, 'productDetails'])->name('product.details');
 Route::get('/shop', [ShopController::class, 'index'])->name('shop.index');
@@ -46,6 +47,7 @@ Route::prefix('customer')->group(function () {
     Route::post('/logout', [CustomerAuthController::class, 'logout'])->name('customer.logout');
     Route::get('/profile', [CustomerController::class, 'profile'])->name('customer.profile');
     Route::get('/orders', [CustomerController::class, 'orders'])->name('customer.orders');
+    Route::get('/orders/{order}', [CustomerController::class, 'show'])->name('frontend.orders.show');
     Route::get('/register', [CustomerAuthController::class, 'showRegisterForm'])->name('customer.register');
     Route::post('/register', [CustomerAuthController::class, 'register']);
     Route::get('/password/forgot', [CustomerAuthController::class, 'showForgotForm'])->name('customer.forgot');
@@ -67,10 +69,11 @@ Route::prefix('checkout')->group(function () {
         return view('frontend.checkout.success');
     })->name('checkout.success');
 });
+Route::get('/payment-success', [CheckoutController::class, 'paymentSuccess'])->name(('payment-success'));
+
 
 Route::prefix('admin')->group(function () {
     Route::get('/dashboard', [HomeController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
-
     Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
     Route::post('/login', [LoginController::class, 'login']);
     Route::post('/logout', [LoginController::class, 'logout'])->name('admin.logout');
