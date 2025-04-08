@@ -48,6 +48,8 @@
                                     <span class="badge bg-success">✅ Hoàn thành</span>
                                 @elseif($order->status == 'cancelled')
                                     <span class="badge bg-danger">❌ Đã hủy</span>
+                                @elseif($order->status == 'identify')
+                                    <span class="badge bg-warning">✅ Đã xác nhận</span>
                                 @endif
                             </td>
                             <td>{{ $order->created_at->format('d/m/Y H:i') }}</td>

@@ -31,7 +31,7 @@ class CustomerAuthController extends Controller
             return redirect()->route('frontend.home')->with('success', 'Đăng nhập thành công');
         }
 
-        return back()->withErrors(['email' => 'Email hoặc mật khẩu không chính xác']);
+        return back()->with('error', 'Email hoặc mật khẩu không chính xác');
     }
 
     public function logout()

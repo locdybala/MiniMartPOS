@@ -47,6 +47,7 @@ Route::prefix('customer')->group(function () {
     Route::post('/logout', [CustomerAuthController::class, 'logout'])->name('customer.logout');
     Route::get('/profile', [CustomerController::class, 'profile'])->name('customer.profile');
     Route::get('/orders', [CustomerController::class, 'orders'])->name('customer.orders');
+    Route::get('/orders/{order}', [CustomerController::class, 'show'])->name('frontend.orders.show');
     Route::get('/register', [CustomerAuthController::class, 'showRegisterForm'])->name('customer.register');
     Route::post('/register', [CustomerAuthController::class, 'register']);
     Route::get('/password/forgot', [CustomerAuthController::class, 'showForgotForm'])->name('customer.forgot');
@@ -68,10 +69,11 @@ Route::prefix('checkout')->group(function () {
         return view('frontend.checkout.success');
     })->name('checkout.success');
 });
+Route::get('/payment-success', [CheckoutController::class, 'paymentSuccess'])->name(('payment-success'));
+
 
 Route::prefix('admin')->group(function () {
     Route::get('/dashboard', [HomeController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
-
     Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
     Route::post('/login', [LoginController::class, 'login']);
     Route::post('/logout', [LoginController::class, 'logout'])->name('admin.logout');
