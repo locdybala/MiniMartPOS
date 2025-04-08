@@ -41,7 +41,8 @@
                             <div class="form-group">
                                 <label>Trạng thái</label>
                                 <div class="form-check form-switch">
-                                    <input class="form-check-input" type="checkbox" id="editStatusCategory">
+                                    <input class="form-check-input" type="checkbox" name="status" {{ isset($post) && $post->status ? 'checked' : '' }}>
+                                    <label class="form-check-label">Kích hoạt</label>
                                 </div>
                             </div>
                             <div class="card-action">

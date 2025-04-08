@@ -49,7 +49,7 @@
                                     <tr>
                                         <td>{{ $i }}</td>
                                         <td>{{ $post->title }}</td>
-                                        <td><img src="{{ asset('uploads/posts/' . $post->image) }}" width="80" alt="{{ $post->title }}"></td>
+                                        <td><img src="{{ asset('storage/' . $post->image) }}" width="80" alt="{{ $post->title }}"></td>
                                         <td>
                                             @if($post->status == 1)
                                                 <span class="badge bg-success">Hiển thị</span>
