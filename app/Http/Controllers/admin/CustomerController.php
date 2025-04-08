@@ -4,7 +4,9 @@ namespace App\Http\Controllers\admin;
 
 use App\Models\Customer;
 use App\Models\CustomerGroup;
+use App\Models\Order;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class CustomerController extends Controller
 {
@@ -62,5 +64,21 @@ class CustomerController extends Controller
     {
         $customers = Customer::select('id', 'name', 'phone')->get();
         return response()->json($customers);
+    }
+
+    public function orders()
+    {
+        $orders = Order::where('customer_id', Auth::guard('customer')->id())
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return view('frontend.customer.historyorder', compact('orders'));
+    }
+
+    public function show($id)
+    {
+        $order = Order::with('details')->findOrFail($id);
+
+        return view('frontend.customer.showdetailorder', compact('order'));
     }
 }

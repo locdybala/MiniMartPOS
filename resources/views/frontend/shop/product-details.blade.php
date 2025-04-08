@@ -209,11 +209,11 @@
                     },
                     success: function(response){
                         // Hiển thị thông báo hoặc cập nhật giỏ hàng header
-                        alert(response.message);
+                        toastr["success"](response.message);
                         $("#cart-count").text(response.cartTotalQuantity);
                     },
                     error: function(xhr){
-                        alert("Có lỗi xảy ra, vui lòng thử lại sau!");
+                        toastr["error"]("Có lỗi xảy ra, vui lòng thử lại sau!");
                     }
                 });
             });

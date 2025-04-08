@@ -7,6 +7,7 @@ use App\Models\Product;
 use App\Models\Review;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\Auth;
 
 class ShopController extends Controller
 {
@@ -44,7 +45,7 @@ class ShopController extends Controller
         ]);
 
         // Lấy thông tin khách hàng từ session hoặc auth (tùy bạn xử lý)
-        $customer = Auth::guard('customer')->user();
+            $customer = Auth::guard('customer')->user();
 
         if (!$customer) {
             return redirect()->back()->with('error', 'Bạn cần đăng nhập để đánh giá.');
