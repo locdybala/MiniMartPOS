@@ -24,7 +24,7 @@
                     <div class="contact__widget">
                         <span class="icon_phone"></span>
                         <h4>Số điện thoại</h4>
-                        <p>+840388886868</p>
+                        <p>+840988.889.999</p>
                     </div>
                 </div>
                 <div class="col-lg-3 col-md-3 col-sm-6 text-center">
@@ -61,7 +61,7 @@
             <div class="inside-widget">
                 <h4>Hà Nội</h4>
                 <ul>
-                    <li>SĐT: +0312-345-6789</li>
+                    <li>SĐT: +0988.889.999</li>
                     <li>Địa chỉ: 41A Phú Diễn</li>
                 </ul>
             </div>

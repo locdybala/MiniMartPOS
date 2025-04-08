@@ -50,7 +50,7 @@
                             </div>
                             <div class="checkout__input">
                                 <p>Ghi chú đơn hàng</p>
-                                <textarea name="order_notes" rows="3"></textarea>
+                                <textarea class="form-control" name="order_notes" rows="3"></textarea>
                             </div>
                         </div>
                         <div class="col-lg-4 col-md-6">
