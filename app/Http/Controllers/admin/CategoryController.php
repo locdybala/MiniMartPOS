@@ -48,7 +48,7 @@ class CategoryController extends Controller
         $group->status = $request->status;
         $group->save();
 
-        return response()->json(['success' => success, 'message' => 'Cập nhật danh mục thành công']);
+        return response()->json(['success' => true, 'message' => 'Cập nhật danh mục thành công']);
     }
 
     public function destroy($id)
