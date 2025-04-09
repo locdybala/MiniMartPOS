@@ -32,9 +32,13 @@ class CheckoutController extends Controller
                 $discount = $coupon['coupon_number']; // giảm tiền
             }
         }
-
+        if ($subtotal > 1000000) {
+            $fee = 0;
+        } else {
+            $fee = 20000;
+        }
         // Tính tổng cộng (subtotal - discount + shipping fee)
-        $total = $subtotal - $discount + 20000; // Phí vận chuyển cố định là 20000 VND
+        $total = $subtotal - $discount + $fee; // Phí vận chuyển cố định là 20000 VND
 
         return view('frontend.checkout.index', [
             'cartItems' => Cart::getContent(),
@@ -65,9 +69,13 @@ class CheckoutController extends Controller
                 $discount = $coupon['coupon_number']; // giảm tiền
             }
         }
-
+        if ($subtotal > 1000000) {
+            $fee = 0;
+        } else {
+            $fee = 20000;
+        }
         // Tính tổng cộng (subtotal - discount + shipping fee)
-        $total = $subtotal - $discount + 20000; // Phí vận chuyển cố định là 20000 VND
+        $total = $subtotal - $discount + $fee; // Phí vận chuyển cố định là 20000 VND
 
         // Lưu thông tin đơn hàng vào bảng 'orders'
         $order = Order::create([
@@ -118,7 +126,7 @@ class CheckoutController extends Controller
         $vnp_Url = "http://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
         $vnp_Returnurl = "http://127.0.0.1:8000/checkout/vnPayCheck";
 
-        $vnp_TxnRef = $data['order_id']; //Mã đơn hàng. Trong thực tế Merchant cần insert đơn hàng vào DB và gửi mã này sang VNPAY
+        $vnp_TxnRef = $data['vnp_TxnRef']; //Mã đơn hàng. Trong thực tế Merchant cần insert đơn hàng vào DB và gửi mã này sang VNPAY
         $vnp_OrderInfo = 'Thanh toán đơn hàng';
         $vnp_OrderType = 'billpayment';
         $vnp_Amount = $data['vnp_Amount'] * 100;
@@ -198,12 +206,11 @@ class CheckoutController extends Controller
         if ($vnp_ResponseCode != null) {
             if ($vnp_ResponseCode == 00) {
                 $order = Order::find($vnp_TxnRef);
-                $order->update([
-                    'status' => 'identify',
-                    'payment_status' => 'paid',
-                ]);
+                $order->status = 'identify';
+                $order->payment_status = 'paid';
+                $order->save();
                 Session::forget('coupon');
-                Cart::destroy();
+                Cart::clear();
                 return redirect()->route('checkout.success')->with('success', 'Đặt hàng thành công!, Thanh toán online thành công');
             } else {
                 $this->orderService->delete($vnp_TxnRef);

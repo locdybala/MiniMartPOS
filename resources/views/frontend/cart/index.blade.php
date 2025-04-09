@@ -99,14 +99,21 @@
                         <h5>Tổng tiền</h5>
                         <ul>
                             <li>Tổng tiền <span class="cart-total">{{ number_format(Cart::getTotal(), 0) }} đ</span></li>
-                            <li class="li-shipping-fee">Phí vận chuyển <span class="shipping-fee">20,000 đ</span></li>
+                            @php
+                                if(Cart::getTotal() > 1000000) {
+                                    $fee = 0;
+                                } else {
+                                    $fee = 20000;
+                                }
+                            @endphp
+                            <li class="li-shipping-fee">Phí vận chuyển <span class="shipping-fee">@if($fee == 0) Miễn Phí vận chuyển @else 20,000 đ @endif</span></li>
                             @if(session('discount'))
                                 <li>Giảm giá <span class="discount-amount">{{ number_format(session('discount'), 0) }} đ</span>
                                     <button id="remove-coupon" class="btn btn-danger btn-sm">Xóa</button>
                                 </li>
                             @endif
 
-                            <li>Tổng thanh toán <span class="cart-total-success">{{ number_format(Cart::getTotal() + 20000 - (session('discount') ?? 0), 0) }} đ</span></li>
+                            <li>Tổng thanh toán <span class="cart-total-success">{{ number_format(Cart::getTotal() + $fee - (session('discount') ?? 0), 0) }} đ</span></li>
                         </ul>
                         @if(Auth::guard('customer')->check())
                         <a href="{{ route('checkout') }}" class="primary-btn">Thanh toán</a>

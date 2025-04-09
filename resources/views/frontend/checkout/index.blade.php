@@ -61,12 +61,19 @@
                                 <div class="checkout__order__products">Sản phẩm <span>Tổng</span></div>
                                 <ul>
                                     @foreach($cartItems as $item)
-                                        <li>{{ $item->name }} x {{ $item->quantity }} <span>{{ number_format($item->price * $item->quantity, 0) }} đ</span></li>
+                                        <li>{{ \Illuminate\Support\Str::limit($item->name, 20) }} x {{ $item->quantity }} <span>{{ number_format($item->price * $item->quantity, 0) }} đ</span></li>
                                     @endforeach
                                 </ul>
+                                @php
+                                    if(Cart::getTotal() > 1000000) {
+                                        $fee = 0;
+                                    } else {
+                                        $fee = 20000;
+                                    }
+                                @endphp
                                 <div class="checkout__order__subtotal">Tổng phụ <span>{{ number_format($subtotal, 0) }} đ</span></div>
                                 <div class="checkout__order__discount">Giảm giá <span>-{{ number_format($discount, 0) }} đ</span></div>
-                                <div class="checkout__order__shipping">Phí vận chuyển <span>{{ number_format(20000, 0) }} đ</span></div>
+                                <div class="checkout__order__shipping">Phí vận chuyển <span>{{ number_format($fee, 0) }} đ</span></div>
                                 <div class="checkout__order__total">Tổng thanh toán <span>{{ number_format($total, 0) }} đ</span></div>
                                 <h4>Phương thức thanh toán</h4>
                                 <div class="checkout__input__radio">
