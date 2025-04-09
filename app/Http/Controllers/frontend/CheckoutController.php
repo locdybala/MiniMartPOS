@@ -4,6 +4,7 @@ namespace App\Http\Controllers\frontend;
 
 use App\Models\Order;
 use App\Models\OrderDetails;
+use App\Utilities\Constant;
 use Cart;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
@@ -101,9 +102,10 @@ class CheckoutController extends Controller
             return redirect()->route('checkout.success')->with('success', 'Đặt hàng thành công!');
         } elseif ($data['payment_method'] == 'online_payment') {
             $data_url = $this->paymentVnpay([
-                'order_id' => $order->id,
-                'amount' => $total,
+                'vnp_TxnRef' => $order->id,
+                'vnp_Amount' => $total,
             ]);
+
             return redirect($data_url);
         }
 
@@ -111,15 +113,15 @@ class CheckoutController extends Controller
 
     public function paymentVnpay($data)
     {
-        $vnp_TmnCode = env('VNP_TMNCODE'); //Mã website tại VNPAY
-        $vnp_HashSecret = env('VNP_HASH_SECRET'); //Chuỗi bí mật
-        $vnp_Url = env('VNP_URL');
-        $vnp_Returnurl = env('VNP_RETURN_URL');
+        $vnp_TmnCode = 'A8CVX1L2'; //Mã website tại VNPAY
+        $vnp_HashSecret = "HJBPUUOGUYQBPUYZWBXEOTAQIBVOXUSB"; //Chuỗi bí mật
+        $vnp_Url = "http://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
+        $vnp_Returnurl = "http://127.0.0.1:8000/checkout/vnPayCheck";
 
-        $vnp_TxnRef = $data['order_id']; //Mã đơn hàng. Trong thực tế Merchant cần insert đơn hàng vào DB và gửi mã này sang VNPAY
+        $vnp_TxnRef = date('YmdHis') . '-' . rand(1000, 9999); ; //Mã đơn hàng. Trong thực tế Merchant cần insert đơn hàng vào DB và gửi mã này sang VNPAY
         $vnp_OrderInfo = 'Thanh toán đơn hàng';
         $vnp_OrderType = 'billpayment';
-        $vnp_Amount = $data['amount'] * 100;
+        $vnp_Amount = $data['vnp_Amount'] * 100;
         $vnp_Locale = 'vn';
         $vnp_BankCode = '';
         $vnp_IpAddr = $_SERVER['REMOTE_ADDR'];
@@ -184,6 +186,30 @@ class CheckoutController extends Controller
             return redirect()->route('checkout.success')->with('success', 'Đặt hàng thành công!, Thanh toán online thành công');
         } catch (\Exception $e) {
             return redirect()->route('home')->with('message', 'Có lỗi xảy ra!');
+        }
+    }
+
+    public function vnPayCheck(Request $request)
+    {
+        $vnp_ResponseCode = $request->get('vnp_ResponseCode');
+        $vnp_TxnRef = $request->get('vnp_TxnRef'); //orderId
+        $vnp_Amount = $request->get('vnp_Amount'); //orderId
+        if ($vnp_ResponseCode != null) {
+            if ($vnp_ResponseCode == 00) {
+                $order = Order::find($vnp_TxnRef);
+                $order->update([
+                    'status' => 'identify',
+                    'payment_status' => 'paid',
+                ]);
+                Session::forget('coupon');
+                Cart::destroy();
+                return redirect()->route('checkout.success')->with('success', 'Đặt hàng thành công!, Thanh toán online thành công');
+            } else {
+                $this->orderService->delete($vnp_TxnRef);
+                return redirect('checkout/result')
+                    ->with('notification', 'Thanh toán online không thành công');
+
+            }
         }
     }
 }
