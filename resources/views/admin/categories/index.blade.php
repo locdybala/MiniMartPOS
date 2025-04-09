@@ -295,7 +295,7 @@
                     status: status
                 },
                 success: function (response) {
-                    if (response.status === "success") {
+                    if (response.success) {
                         $("#editCategoryModal").modal("hide");
                         $.notify({
                             icon: "icon-bell",
