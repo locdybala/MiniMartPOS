@@ -75,7 +75,7 @@ Route::get('/payment-success', [CheckoutController::class, 'paymentSuccess'])->n
 Route::prefix('admin')->group(function () {
     Route::get('/dashboard', [HomeController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
     Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
-    Route::post('/login', [LoginController::class, 'login']);
+    Route::post('/login', [LoginController::class, 'loutogin']);
     Route::post('/logout', [LoginController::class, 'logout'])->name('admin.logout');
 
     Route::middleware('auth')->group(function () {
