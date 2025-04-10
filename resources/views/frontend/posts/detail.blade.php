@@ -1,5 +1,10 @@
 @extends('frontend.layouts.frontend_layout')
 @section('content')
+    <style>.blog__details__text img {
+            max-width: 100%;
+            width: 1200px !important;
+            height: auto;
+        }</style>
     <!-- Blog Details Hero Begin -->
     <section class="blog-details-hero set-bg" data-setbg="{{ asset('storage/' . $post->image) }}">
         <div class="container">

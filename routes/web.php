@@ -68,6 +68,8 @@ Route::prefix('checkout')->group(function () {
     Route::get('/success', function() {
         return view('frontend.checkout.success');
     })->name('checkout.success');
+    Route::get('vnPayCheck', [CheckoutController::class, 'vnPayCheck']);
+
 });
 Route::get('/payment-success', [CheckoutController::class, 'paymentSuccess'])->name(('payment-success'));
 
