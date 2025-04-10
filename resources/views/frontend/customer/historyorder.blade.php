@@ -65,6 +65,14 @@
                             </td>
                             <td>
                                 <a href="{{ route('frontend.orders.show', $order->id) }}" class="btn btn-sm btn-info">Chi tiết</a>
+                                @if(in_array($order->status, ['pending', 'processing']) && $order->payment_status != 'paid')
+                                    <button
+                                        class="btn btn-danger btn-sm mt-2 cancel-order-btn"
+                                        data-id="{{ $order->id }}"
+                                    >
+                                        Hủy đơn hàng
+                                    </button>
+                                @endif
                             </td>
 
                         </tr>
@@ -78,4 +86,32 @@
             </div>
         </div>
     </section>
+@endsection
+@section('js')
+    <script>
+        $(document).ready(function () {
+            $('.cancel-order-btn').click(function (e) {
+                debugger
+                e.preventDefault();
+                let orderId = $(this).data('id');
+
+                if (confirm('Bạn có chắc muốn hủy đơn hàng này không?')) {
+                    $.ajax({
+                        url: '/cancel/' + orderId,
+                        type: 'POST',
+                        data: {
+                            _token: '{{ csrf_token() }}'
+                        },
+                        success: function (response) {
+                            alert('Đơn hàng đã được hủy thành công.');
+                            location.reload();
+                        },
+                        error: function (xhr) {
+                            alert('Hủy đơn hàng thất bại. Vui lòng thử lại!' + xhr.responseText);
+                        }
+                    });
+                }
+            });
+        });
+    </script>
 @endsection

@@ -13,15 +13,18 @@
                     <div class="card-header">
                         <div class="d-flex align-items-center">
                             <h4 class="card-title">Quản lý {{$title}}</h4>
-                            <button
-                                class="btn btn-primary btn-round ms-auto"
-                                data-bs-toggle="modal"
-                                data-bs-target="#addBrandForm"
-                            >
-                                <i class="fa fa-plus"></i>
-                                Thêm mới
-                            </button>
-
+                            @auth
+                                @if(Auth::user()->role->name === 'Admin')
+                                    <button
+                                        class="btn btn-primary btn-round ms-auto"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#addBrandForm"
+                                    >
+                                        <i class="fa fa-plus"></i>
+                                        Thêm mới
+                                    </button>
+                                @endif
+                            @endauth
                         </div>
                     </div>
                     <div class="card-body">
@@ -68,7 +71,8 @@
                                                 <div class="col-md-12">
                                                     <div class="form-group form-group-default">
                                                         <label>Ảnh thương hiệu</label>
-                                                        <input type="file" class="form-control" id="brandImage" name="image">
+                                                        <input type="file" class="form-control" id="brandImage"
+                                                               name="image">
                                                     </div>
                                                 </div>
                                                 <div class="col-md-12">
@@ -81,15 +85,18 @@
                                                     <div class="form-group form-group-default">
                                                         <label>Trạng thái</label>
                                                         <div class="form-check form-switch">
-                                                            <input class="form-check-input" type="checkbox" id="statusBrand" name="statusBrand" checked>
+                                                            <input class="form-check-input" type="checkbox"
+                                                                   id="statusBrand" name="statusBrand" checked>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="modal-footer border-0">
-                                            <button type="button" id="addBrand" class="btn btn-primary">Thêm mới</button>
-                                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Đóng</button>
+                                            <button type="button" id="addBrand" class="btn btn-primary">Thêm mới
+                                            </button>
+                                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Đóng
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
@@ -110,7 +117,11 @@
                                     <th>Ảnh</th>
                                     <th>Người tạo</th>
                                     <th>Trạng thái</th>
-                                    <th style="width: 10%">Thao tác</th>
+                                    @auth
+                                        @if(Auth::user()->role->name === 'Admin')
+                                            <th style="width: 10%">Thao tác</th>
+                                        @endif
+                                    @endauth
                                 </tr>
                                 </thead>
                                 <tfoot>
@@ -120,7 +131,11 @@
                                     <th>Ảnh</th>
                                     <th>Người tạo</th>
                                     <th>Trạng thái</th>
-                                    <th style="width: 10%">Thao tác</th>
+                                    @auth
+                                        @if(Auth::user()->role->name === 'Admin')
+                                            <th style="width: 10%">Thao tác</th>
+                                        @endif
+                                    @endauth
                                 </tr>
                                 </tfoot>
                                 <tbody>
@@ -131,87 +146,127 @@
                                         <td>{{$brand->name}}</td>
                                         <td>
                                             @if($brand->image)
-                                                <img src="{{ asset('storage/' . $brand->image) }}" alt="Ảnh thương hiệu" width="50">
+                                                <img src="{{ asset('storage/' . $brand->image) }}" alt="Ảnh thương hiệu"
+                                                     width="50">
                                             @else
                                                 Không có ảnh
                                             @endif
                                         </td>
                                         <td> {{ $brand->user ? $brand->user->name : 'Không xác định' }}</td>
-                                        <td>@if($brand->status == 1) Hoạt động @else Không hoạt động @endif</td>
                                         <td>
-                                            <div class="form-button-action">
-                                                <button type="button"
-                                                        class="btn btn-link btn-primary btn-lg editBrandBtn"
-                                                        data-id="{{ $brand->id }}"
-                                                        data-name="{{ $brand->name }}"
-                                                        data-description="{{ $brand->description }}"
-                                                        data-status="{{ $brand->status }}"
-                                                        data-bs-toggle="modal"
-                                                        data-bs-target="#editBrandModal"
-                                                >
-                                                    <i class="fa fa-edit"></i>
-                                                </button>
-                                                <!-- Modal Sửa -->
-                                                <div class="modal fade" id="editBrandModal" tabindex="-1" role="dialog" aria-hidden="true">
-                                                    <div class="modal-dialog" role="document">
-                                                        <div class="modal-content">
-                                                            <div class="modal-header border-0">
-                                                                <h5 class="modal-title">
-                                                                    <span class="fw-mediumbold">Chỉnh sửa</span>
-                                                                    <span class="fw-light"> {{$title}} </span>
-                                                                </h5>
-                                                                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                                                                    <span aria-hidden="true">&times;</span>
-                                                                </button>
-                                                            </div>
-                                                            <div class="modal-body">
-                                                                <form id="editBrandForm" enctype="multipart/form-data">
-                                                                    @csrf
-                                                                    <input type="hidden" id="editBrandId">
-                                                                    <div class="row">
-                                                                        <div class="col-sm-12">
-                                                                            <div class="form-group form-group-default">
-                                                                                <label>Tên {{$title}}</label>
-                                                                                <input id="editNameBrand" name="name" type="text" class="form-control">
-                                                                            </div>
-                                                                        </div>
-                                                                        <div class="col-md-12">
-                                                                            <div class="form-group form-group-default">
-                                                                                <label>Ảnh thương hiệu</label>
-                                                                                <input type="file" class="form-control" id="editBrandImage" name="image">
-                                                                                <img id="previewEditImage" src="" alt="Ảnh hiện tại" width="100" class="mt-2">
-                                                                            </div>
-                                                                        </div>
-                                                                        <div class="col-md-12">
-                                                                            <div class="form-group form-group-default">
-                                                                                <label>Mô tả</label>
-                                                                                <textarea class="form-control" id="editDescription"></textarea>
-                                                                            </div>
-                                                                        </div>
-                                                                        <div class="col-md-12">
-                                                                            <div class="form-group form-group-default">
-                                                                                <label>Trạng thái</label>
-                                                                                <div class="form-check form-switch">
-                                                                                    <input class="form-check-input" type="checkbox" id="editStatusBrand">
+                                            <span class="badge {{ $brand->status == 1 ? 'bg-success' : 'bg-secondary' }}">
+                                                {{ $brand->status == 1 ? 'Hoạt động' : 'Không hoạt động' }}
+                                            </span>
+                                        @auth
+                                            @if(Auth::user()->role->name === 'Admin')
+
+                                                <td>
+                                                    <div class="form-button-action">
+                                                        <button type="button"
+                                                                class="btn btn-link btn-primary btn-lg editBrandBtn"
+                                                                data-id="{{ $brand->id }}"
+                                                                data-name="{{ $brand->name }}"
+                                                                data-description="{{ $brand->description }}"
+                                                                data-status="{{ $brand->status }}"
+                                                                data-bs-toggle="modal"
+                                                                data-bs-target="#editBrandModal"
+                                                        >
+                                                            <i class="fa fa-edit"></i>
+                                                        </button>
+                                                        <!-- Modal Sửa -->
+                                                        <div class="modal fade" id="editBrandModal" tabindex="-1"
+                                                             role="dialog"
+                                                             aria-hidden="true">
+                                                            <div class="modal-dialog" role="document">
+                                                                <div class="modal-content">
+                                                                    <div class="modal-header border-0">
+                                                                        <h5 class="modal-title">
+                                                                            <span class="fw-mediumbold">Chỉnh sửa</span>
+                                                                            <span class="fw-light"> {{$title}} </span>
+                                                                        </h5>
+                                                                        <button type="button" class="close"
+                                                                                data-bs-dismiss="modal"
+                                                                                aria-label="Close">
+                                                                            <span aria-hidden="true">&times;</span>
+                                                                        </button>
+                                                                    </div>
+                                                                    <div class="modal-body">
+                                                                        <form id="editBrandForm"
+                                                                              enctype="multipart/form-data">
+                                                                            @csrf
+                                                                            <input type="hidden" id="editBrandId">
+                                                                            <div class="row">
+                                                                                <div class="col-sm-12">
+                                                                                    <div
+                                                                                        class="form-group form-group-default">
+                                                                                        <label>Tên {{$title}}</label>
+                                                                                        <input id="editNameBrand"
+                                                                                               name="name"
+                                                                                               type="text"
+                                                                                               class="form-control">
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="col-md-12">
+                                                                                    <div
+                                                                                        class="form-group form-group-default">
+                                                                                        <label>Ảnh thương hiệu</label>
+                                                                                        <input type="file"
+                                                                                               class="form-control"
+                                                                                               id="editBrandImage"
+                                                                                               name="image">
+                                                                                        <img id="previewEditImage"
+                                                                                             src=""
+                                                                                             alt="Ảnh hiện tại"
+                                                                                             width="100"
+                                                                                             class="mt-2">
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="col-md-12">
+                                                                                    <div
+                                                                                        class="form-group form-group-default">
+                                                                                        <label>Mô tả</label>
+                                                                                        <textarea class="form-control"
+                                                                                                  id="editDescription"></textarea>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="col-md-12">
+                                                                                    <div
+                                                                                        class="form-group form-group-default">
+                                                                                        <label>Trạng thái</label>
+                                                                                        <div
+                                                                                            class="form-check form-switch">
+                                                                                            <input
+                                                                                                class="form-check-input"
+                                                                                                type="checkbox"
+                                                                                                id="editStatusBrand">
+                                                                                        </div>
+                                                                                    </div>
                                                                                 </div>
                                                                             </div>
-                                                                        </div>
+                                                                            <div class="modal-footer border-0">
+                                                                                <button type="button" id="updateBrand"
+                                                                                        class="btn btn-primary">Cập nhật
+                                                                                </button>
+                                                                                <button type="button"
+                                                                                        class="btn btn-danger"
+                                                                                        data-bs-dismiss="modal">Đóng
+                                                                                </button>
+                                                                            </div>
+                                                                        </form>
                                                                     </div>
-                                                                    <div class="modal-footer border-0">
-                                                                        <button type="button" id="updateBrand" class="btn btn-primary">Cập nhật</button>
-                                                                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Đóng</button>
-                                                                    </div>
-                                                                </form>
+                                                                </div>
                                                             </div>
                                                         </div>
-                                                    </div>
-                                                </div>
 
-                                                <button type="button" class="btn btn-link btn-danger deleteBrand" data-id="{{ $brand->id }}">
-                                                    <i class="fa fa-times"></i>
-                                                </button>
-                                            </div>
-                                        </td>
+                                                        <button type="button"
+                                                                class="btn btn-link btn-danger deleteBrand"
+                                                                data-id="{{ $brand->id }}">
+                                                            <i class="fa fa-times"></i>
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            @endif
+                                        @endauth
                                     </tr>
                                 @endforeach
                                 </tbody>
@@ -250,7 +305,7 @@
                             message: response.message
                         }, {
                             type: 'success',
-                            placement: { from: "top", align: "right" },
+                            placement: {from: "top", align: "right"},
                             time: 1000
                         });
                         setTimeout(() => location.reload(), 1000);
@@ -264,7 +319,7 @@
                         message: errors[Object.keys(errors)[0]][0]
                     }, {
                         type: 'warning',
-                        placement: { from: "top", align: "right" },
+                        placement: {from: "top", align: "right"},
                         time: 1000
                     });
                 }
@@ -323,7 +378,7 @@
                             message: response.message
                         }, {
                             type: 'success',
-                            placement: { from: "top", align: "right" },
+                            placement: {from: "top", align: "right"},
                             time: 1000
                         });
                         setTimeout(() => location.reload(), 1000);
@@ -337,7 +392,7 @@
                         message: "Có lỗi xảy ra, vui lòng thử lại!"
                     }, {
                         type: 'warning',
-                        placement: { from: "top", align: "right" },
+                        placement: {from: "top", align: "right"},
                         time: 1000
                     });
                 }

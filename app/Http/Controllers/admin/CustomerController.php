@@ -81,4 +81,20 @@ class CustomerController extends Controller
 
         return view('frontend.customer.showdetailorder', compact('order'));
     }
+
+    // OrderController
+    public function cancel(Request $request, $id)
+    {
+        $order = Order::find($id);
+
+        if (in_array($order->status, ['pending', 'processing']) && $order->payment_status !== 'paid') {
+            $order->status = 'cancelled';
+            $order->save();
+
+            return response()->json(['message' => 'Đơn hàng đã hủy']);
+        }
+
+        return response()->json(['message' => 'Không thể hủy đơn hàng'], 400);
+    }
+
 }

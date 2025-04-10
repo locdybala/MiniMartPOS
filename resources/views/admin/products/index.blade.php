@@ -13,8 +13,13 @@
                     <div class="card-header">
                         <div class="d-flex align-items-center">
                             <h4 class="card-title">Quản lý {{$title}}</h4>
-                            <a href="{{ route('products.create') }}" class="btn btn-primary btn-round ms-auto"><i class="fa fa-plus"></i>
-                                Thêm mới</a>
+                            @auth
+                                @if(Auth::user()->role->name === 'Admin')
+                                    <a href="{{ route('products.create') }}" class="btn btn-primary btn-round ms-auto">
+                                        <i class="fa fa-plus"></i> Thêm mới
+                                    </a>
+                                @endif
+                            @endauth
 
                         </div>
                     </div>
@@ -72,6 +77,8 @@
                                         <td>{{ $product->stock }}</td>
                                         <td>{{ $product->status ? 'Hoạt động' : 'Ẩn' }}</td>
                                         <td>
+                                            @auth
+                                                @if(Auth::user()->role->name === 'Admin')
                                             <div class="form-button-action">
                                                 <a href="{{ route('products.edit', $product) }}" class="btn btn-link btn-primary btn-lg"><i class="fa fa-edit"></i></a>
                                                 <form action="{{ route('products.destroy', $product) }}" method="POST" style="display:inline;">
@@ -79,6 +86,8 @@
                                                     <button type="submit" class="btn btn-link btn-danger deleteProduct" data-id="{{ $product->id }}"><i class="fa fa-times"></i></button>
                                                 </form>
                                             </div>
+                                                @endif
+                                            @endauth
                                         </td>
                                     </tr>
                                 @endforeach

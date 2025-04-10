@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\admin;
 
 use App\Models\Coupon;
+use App\Models\Customer;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
 class CouponController extends Controller
 {
@@ -87,5 +89,37 @@ class CouponController extends Controller
         $coupon->delete();
 
         return redirect()->route('coupons.index')->with('success', 'Xóa mã giảm giá thành công');
+    }
+
+    public function sendEmail(Request $request)
+    {
+        $couponId = $request->coupon_id;
+        $target = $request->target;
+
+        $coupon = Coupon::findOrFail($couponId);
+
+        // Lọc khách hàng theo đối tượng
+        $customers = match ($target) {
+            'vip' => Customer::whereHas('customerGroup', function ($q) {
+                $q->where('name', 'VIP');
+            })->get(),
+
+            'normal' => Customer::whereHas('customerGroup', function ($q) {
+                $q->where('name', 'Khách thường');
+            })->get(),
+
+            default => Customer::all(),
+        };
+        foreach ($customers as $customer) {
+            Mail::send('admin.mails.send-coupon', [
+                'customer' => $customer,
+                'coupon' => $coupon,
+            ], function ($message) use ($customer) {
+                $message->to($customer->email, $customer->name)
+                    ->subject('Mã giảm giá dành cho bạn từ cửa hàng!');
+            });
+        }
+
+        return redirect()->back()->with('success', 'Đã gửi mã giảm giá thành công!');
     }
 }

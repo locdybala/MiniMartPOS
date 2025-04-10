@@ -9,7 +9,7 @@ class InventoryController extends Controller
 {
     public function index()
     {
-        $products = Product::all();
+        $products = Product::with(['importDetails', 'orderDetails', 'latestImport'])->get();
         return view('admin.inventory.index', compact('products'));
     }
 

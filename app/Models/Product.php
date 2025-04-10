@@ -31,11 +31,35 @@ class Product extends Model
 
     public function getLatestImportPriceAttribute()
     {
-        return $this->latestImport ? $this->latestImport->price : null;
+        return $this->latestImport ? $this->latestImport->unit_price : null;
     }
 
     public function reviews()
     {
         return $this->hasMany(Review::class);
+    }
+
+    // Quan hệ với chi tiết phiếu nhập
+    public function importDetails()
+    {
+        return $this->hasMany(ImportOrderDetail::class, 'product_id');
+    }
+
+// Quan hệ với chi tiết đơn hàng (bán)
+    public function orderDetails()
+    {
+        return $this->hasMany(OrderDetails::class, 'product_id');
+    }
+
+// Số lượng đã nhập
+    public function getImportedQuantityAttribute()
+    {
+        return $this->importDetails->sum('quantity');
+    }
+
+// Số lượng đã bán
+    public function getSoldQuantityAttribute()
+    {
+        return $this->orderDetails->sum('quantity');
     }
 }

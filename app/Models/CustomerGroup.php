@@ -12,7 +12,8 @@ class CustomerGroup extends Model
     protected $guarded = [];
 
 
-    public function customers() {
+    public function customers()
+    {
         return $this->hasMany(Customer::class);
     }
 }

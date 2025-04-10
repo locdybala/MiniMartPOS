@@ -82,6 +82,10 @@
                                            onchange="calculateChange()">
                                 </div>
                                 <p><strong>Tiền thừa trả khách:</strong> <span id="changeAmount">0 VNĐ</span></p>
+                                <div class="mb-3">
+                                    <label class="form-label">Chọn nhanh mệnh giá:</label>
+                                    <div id="quickMoneyButtons" class="d-flex flex-wrap gap-2"></div>
+                                </div>
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
@@ -187,10 +191,9 @@
         }
 
         function confirmPayment() {
-            debugger;
             // Lấy thông tin khách hàng từ modal
             let customerName = $('#customerName').text();
-            let totalAmount = parseInt($('#totalAmount').text().replace(' VNĐ', '').replace(',', ''));
+            let totalAmount = parseInt($('#totalAmount').text().replace(/[,.]/g, '').replace(' VNĐ', ''));
             let discount = parseInt($('#discount').val());
             let finalAmount = totalAmount - discount; // Số tiền khách hàng cần trả
 
@@ -309,7 +312,6 @@
         loadCustomers();
         // Khi chọn khách hàng
         $(".customer-item").on("click", function () {
-            debugger
             let customerName = $(this).data("name");
             let customerPhone = $(this).data("phone");
 
@@ -327,6 +329,68 @@
                 $("#customerPhone").text("");
             }
         });
+    </script>
 
+    <script>
+        function updateFinalAmount() {
+            let total = parseInt($('#totalAmount').text().replace(/[,.]/g, '').replace(' VNĐ', ''));
+            const discount = parseInt($('#discount').val()) || 0;
+            const final = total - discount;
+
+            $('#finalAmount')
+                .text(final.toLocaleString('vi-VN') + ' VNĐ')
+                .data('value', final);
+
+            generateQuickMoneyButtons(final);
+            calculateChange();
+        }
+
+        function calculateChange() {
+            const customerPaid = parseInt($('#customerPaid').val()) || 0;
+            const final = parseInt($('#finalAmount').data('value')) || 0;
+            const change = customerPaid - final;
+
+            $('#changeAmount').text(change > 0 ? change.toLocaleString('vi-VN') + ' VNĐ' : '0 VNĐ');
+        }
+
+        function generateQuickMoneyButtons(amount) {
+            debugger
+            const $container = $('#quickMoneyButtons');
+            $container.empty();
+
+            // Làm tròn lên mệnh giá gần nhất
+            const suggestions = [];
+
+            // Mệnh giá gốc
+            suggestions.push(amount);
+
+            // 2 mệnh giá lớn hơn gần nhất (làm tròn lên 10k)
+            let next1 = Math.ceil((amount + 8000) / 10000) * 10000;
+            let next2 = next1 + 10000;
+
+            suggestions.push(next1);
+            suggestions.push(next2);
+
+            // Render các nút gợi ý
+            $.each(suggestions, function (_, value) {
+                const $btn = $('<button>')
+                    .addClass('btn btn-outline-primary me-1 mb-1')
+                    .attr('type', 'button')
+                    .text(value.toLocaleString('vi-VN') + ' VNĐ')
+                    .on('click', function () {
+                        $('#customerPaid').val(value);
+                        calculateChange();
+                    });
+                $container.append($btn);
+            });
+        }
+
+
+        // Khởi tạo khi modal mở
+        $('#confirmPaymentModal').on('shown.bs.modal', function () {
+            let total = parseInt($('#totalAmount').text().replace(/[,.]/g, '').replace(' VNĐ', ''));
+            $('#finalAmount').data('value', total);
+            generateQuickMoneyButtons(total);
+        });
     </script>
 @endsection

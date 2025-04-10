@@ -56,7 +56,7 @@
                                 <div class="featured__item__pic set-bg" data-setbg="{{ asset('storage/'.$product->images->first()->image_path) }}">
                                     <ul class="featured__item__pic__hover">
                                         <li><a href="#"><i class="fa fa-retweet"></i></a></li>
-                                        <li><a href="#" class="add-to-cart" data-id="{{ $product->id }}"><i class="fa fa-shopping-cart"></i></a></li>
+                                        <li><a href="#" class="add-to-cart" data-id="{{ $product->id }}" data-stock="{{$product->stock}}"><i class="fa fa-shopping-cart"></i></a></li>
                                     </ul>
                                 </div>
                                 <div class="featured__item__text">
@@ -179,7 +179,7 @@
                         <div class="col-lg-4 col-md-4 col-sm-6">
                             <div class="blog__item">
                                 <div class="blog__item__pic">
-                                    <img src="{{ asset('storage/' . $post->image) }}" alt="{{ $post->title }}">
+                                    <a href="{{ route('posts.show', $post->slug) }}"><img src="{{ asset('storage/' . $post->image) }}" alt="{{ $post->title }}"></a>
                                 </div>
                                 <div class="blog__item__text">
                                     <ul>
@@ -203,9 +203,13 @@
             $(".add-to-cart").on("click", function(e){
                 e.preventDefault();
                 var productId = $(this).data("id");
+                var stock = $(this).data("stock");
                 // Lấy số lượng từ ô nhập, nếu có. Nếu không có thì mặc định là 1.
                 var quantity = $(".pro-qty input").val() || 1;
-
+                if (quantity > stock) {
+                    toastr["error"]("Sản phẩm đã hết hàng " + stock);
+                    return;
+                }
                 $.ajax({
                     url: "{{ route('cart.add') }}",
                     type: "POST",

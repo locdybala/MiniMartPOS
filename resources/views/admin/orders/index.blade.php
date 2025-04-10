@@ -42,14 +42,21 @@
                                     </span>
                             </td>
                             <td>
-                                @if($order->status == 'pending')
-                                    <span class="badge bg-warning">🕒 Chờ xử lý</span>
-                                @elseif($order->status == 'completed')
-                                    <span class="badge bg-success">✅ Hoàn thành</span>
-                                @elseif($order->status == 'cancelled')
-                                    <span class="badge bg-danger">❌ Đã hủy</span>
-                                @elseif($order->status == 'identify')
-                                    <span class="badge bg-warning">✅ Đã xác nhận</span>
+                                @php
+                                    $statusBadges = [
+                                        'pending' => ['class' => 'bg-warning', 'label' => '🕒 Chờ xử lý'],
+                                        'completed' => ['class' => 'bg-success', 'label' => '✅ Hoàn thành'],
+                                        'cancelled' => ['class' => 'bg-danger', 'label' => '❌ Đã hủy'],
+                                        'identify' => ['class' => 'bg-info', 'label' => '✅ Đã xác nhận'],
+                                        'processing' => ['class' => 'bg-primary', 'label' => '🔄 Đang xử lý'],
+                                        'shipping' => ['class' => 'bg-secondary', 'label' => '🚚 Đang vận chuyển'],
+                                    ];
+                                @endphp
+
+                                @if(isset($statusBadges[$order->status]))
+                                    <span class="badge {{ $statusBadges[$order->status]['class'] }}">
+                                        {{ $statusBadges[$order->status]['label'] }}
+                                    </span>
                                 @endif
                             </td>
                             <td>{{ $order->created_at->format('d/m/Y H:i') }}</td>
@@ -57,10 +64,17 @@
                                 <div class="form-button-action">
                                     <!-- Xem chi tiết đơn hàng -->
                                     <a href="{{ route('orders.show', $order->id) }}" class="btn btn-link btn-info btn-lg"><i class="fa fa-eye"></i> Xem chi tiết</a>
+                                    @php
+                                        $isCompleted = $order->status === 'completed';
+                                        $isCancelledTooLate = $order->status === 'cancelled' && $order->created_at->addDays(3)->isPast();
+                                    @endphp
 
-                                    <!-- Chỉnh sửa trạng thái -->
-                                    <a href="{{ route('orders.edit-status', $order->id) }}" class="btn btn-link btn-warning btn-lg"><i class="fa fa-edit"></i> Chỉnh sửa trạng thái</a>
-
+                                    @if(!$isCompleted && !$isCancelledTooLate)
+                                        <a href="{{ route('orders.edit-status', $order->id) }}"
+                                           class="btn btn-link btn-warning btn-lg">
+                                            <i class="fa fa-edit"></i> Chỉnh sửa trạng thái
+                                        </a>
+                                    @endif
                                     <!-- Xóa đơn hàng -->
                                     <form action="{{ route('orders.destroy', $order->id) }}" method="POST" style="display:inline;">
                                         @csrf

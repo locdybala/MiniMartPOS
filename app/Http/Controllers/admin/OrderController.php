@@ -93,7 +93,7 @@ class OrderController extends Controller
     {
         // Validate input
         $request->validate([
-            'status' => 'required|in:pending,completed,cancelled',
+            'status' => 'required|in:pending,identify,processing,shipping,completed,cancelled',
         ]);
 
         // Lấy đơn hàng theo id
@@ -103,8 +103,25 @@ class OrderController extends Controller
         $order->status = $request->status;
         $order->save();
 
+        if ($request->status == 'completed') {
+            $this->updateCustomerGroup($order->customer_id);
+        }
+
         // Chuyển hướng về danh sách đơn hàng và thông báo thành công
         return redirect()->route('orders.index')->with('success', 'Trạng thái đơn hàng đã được cập nhật.');
+    }
+
+    protected function updateCustomerGroup($customerId)
+    {
+        $vipGroupId = 2; // ID nhóm VIP
+        $totalSpent = Order::where('customer_id', $customerId)
+            ->where('status', 'completed')
+            ->sum('final_total');
+
+        if ($totalSpent >= 5000000) {
+            Customer::where('id', $customerId)
+                ->update(['customer_group_id' => $vipGroupId]);
+        }
     }
 
     public function checkout(Request $request)

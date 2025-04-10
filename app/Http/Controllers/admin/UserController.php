@@ -28,15 +28,15 @@ class UserController extends Controller
     // Lưu người dùng mới
     public function store(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
-            'password' => 'required|string|min:8',
+            'password' => 'required|string|min:5',
             'role_id' => 'required|exists:roles,id',
         ]);
 
-        $request->password = bcrypt($request->password);
-        User::create($request->all());
+        $validated['password'] = bcrypt($validated['password']);
+        User::create($validated);
 
         return redirect()->route('users.index')->with('success', 'Thêm người dùng thành công');
     }

@@ -52,7 +52,9 @@ Route::prefix('customer')->group(function () {
     Route::post('/register', [CustomerAuthController::class, 'register']);
     Route::get('/password/forgot', [CustomerAuthController::class, 'showForgotForm'])->name('customer.forgot');
     Route::post('/password/email', [CustomerAuthController::class, 'sendResetLink'])->name('customer.send_email');
+    // web.php
 });
+Route::post('/cancel/{id}', [CustomerController::class, 'cancel'])->name('frontend.cancel');
 
 Route::prefix('cart')->group(function () {
     Route::post('/add', [CartController::class, 'addToCart'])->name('cart.add');
@@ -129,7 +131,9 @@ Route::prefix('admin')->group(function () {
         Route::get('/getCustomers', [CustomerController::class, 'getCustomers']);
         Route::resource('posts', PostController::class);
 
-        Route::resource('admin/coupons', CouponController::class);
+        Route::resource('/coupons', CouponController::class);
+        // web.php
+        Route::post('/coupons/send-email', [CouponController::class, 'sendEmail'])->name('coupons.send-email');
         Route::get('orders/{id}/edit-status', [OrderController::class, 'editStatus'])->name('orders.edit-status');
         Route::put('orders/{id}/update-status', [OrderController::class, 'updateStatus'])->name('orders.update-status');
         Route::post('checkout', [OrderController::class, 'checkout'])->name('orders.checkout');

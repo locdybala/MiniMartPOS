@@ -146,7 +146,13 @@
                                 <p class="dropdown-item"><strong>Role ID:</strong> {{ Auth::user()->role_id }}</p>
                                 <p class="dropdown-item"><strong>Created At:</strong> {{ Auth::user()->created_at }}</p>
                                 <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="{{ route('admin.logout') }}">Logout</a>
+                                <form id="logout-form" action="{{ route('admin.logout') }}" method="POST" style="display: none;">
+                                    @csrf
+                                </form>
+
+                                <a class="dropdown-item" href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                    Logout
+                                </a>
                             </li>
                         </div>
                     </ul>

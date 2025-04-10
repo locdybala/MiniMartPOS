@@ -65,7 +65,7 @@
                                     @endforeach
                                 </ul>
                                 @php
-                                    if(Cart::getTotal() > 1000000) {
+                                    if(Cart::getTotal() > 1000000 || Auth::guard('customer')->user()->customer_group_id == 1) {
                                         $fee = 0;
                                     } else {
                                         $fee = 20000;

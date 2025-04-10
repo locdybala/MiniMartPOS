@@ -13,14 +13,18 @@
                     <div class="card-header">
                         <div class="d-flex align-items-center">
                             <h4 class="card-title">Quản lý {{$title}}</h4>
-                            <button
-                                class="btn btn-primary btn-round ms-auto"
-                                data-bs-toggle="modal"
-                                data-bs-target="#addSupplierForm"
-                            >
-                                <i class="fa fa-plus"></i>
-                                Thêm mới
-                            </button>
+                            @auth
+                                @if(Auth::user()->role->name === 'Admin')
+                                    <button
+                                        class="btn btn-primary btn-round ms-auto"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#addSupplierForm"
+                                    >
+                                        <i class="fa fa-plus"></i>
+                                        Thêm mới
+                                    </button>
+                                @endif
+                            @endauth
 
                         </div>
                     </div>
@@ -69,7 +73,8 @@
                                                 <div class="col-sm-12">
                                                     <div class="form-group form-group-default">
                                                         <label>Số điện thoại</label>
-                                                        <input id="phoneSupplier" name="phone" type="text" class="form-control" placeholder="Nhập số điện thoại">
+                                                        <input id="phoneSupplier" name="phone" type="text"
+                                                               class="form-control" placeholder="Nhập số điện thoại">
                                                     </div>
                                                 </div>
 
@@ -77,7 +82,8 @@
                                                 <div class="col-sm-12">
                                                     <div class="form-group form-group-default">
                                                         <label>Email</label>
-                                                        <input id="emailSupplier" name="email" type="email" class="form-control" placeholder="Nhập email">
+                                                        <input id="emailSupplier" name="email" type="email"
+                                                               class="form-control" placeholder="Nhập email">
                                                     </div>
                                                 </div>
 
@@ -85,7 +91,8 @@
                                                 <div class="col-sm-12">
                                                     <div class="form-group form-group-default">
                                                         <label>Địa chỉ</label>
-                                                        <input id="addressSupplier" name="address" type="text" class="form-control" placeholder="Nhập địa chỉ">
+                                                        <input id="addressSupplier" name="address" type="text"
+                                                               class="form-control" placeholder="Nhập địa chỉ">
                                                     </div>
                                                 </div>
                                                 <div class="col-md-12">
@@ -97,14 +104,17 @@
                                                 <div class="col-sm-12">
                                                     <div class="form-group form-group-default">
                                                         <label>Mã số thuế</label>
-                                                        <input id="taxcodeSupplier" name="taxcode" type="text" class="form-control" placeholder="Nhập mã số thuế">
+                                                        <input id="taxcodeSupplier" name="taxcode" type="text"
+                                                               class="form-control" placeholder="Nhập mã số thuế">
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="modal-footer border-0">
-                                            <button type="button" id="addSupplier" class="btn btn-primary">Thêm mới</button>
-                                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Đóng</button>
+                                            <button type="button" id="addSupplier" class="btn btn-primary">Thêm mới
+                                            </button>
+                                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Đóng
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
@@ -126,7 +136,11 @@
                                     <th>Địa chỉ</th>
                                     <th>Email</th>
                                     <th>Ghi chú</th>
-                                    <th style="width: 10%">Thao tác</th>
+                                    @auth
+                                        @if(Auth::user()->role->name === 'Admin')
+                                            <th style="width: 10%">Thao tác</th>
+                                        @endif
+                                    @endauth
                                 </tr>
                                 </thead>
                                 <tfoot>
@@ -137,7 +151,11 @@
                                     <th>Địa chỉ</th>
                                     <th>Email</th>
                                     <th>Ghi chú</th>
-                                    <th style="width: 10%">Thao tác</th>
+                                    @auth
+                                        @if(Auth::user()->role->name === 'Admin')
+                                            <th style="width: 10%">Thao tác</th>
+                                        @endif
+                                    @endauth
                                 </tr>
                                 </tfoot>
                                 <tbody>
@@ -150,92 +168,127 @@
                                         <td>{{$supplier->email}}</td>
                                         <td>{{$supplier->address}}</td>
                                         <td>{{$supplier->description}}</td>
-                                        <td>
-                                            <div class="form-button-action">
-                                                <button type="button"
-                                                        class="btn btn-link btn-primary editSupplierBtn"
-                                                        data-id="{{ $supplier->id }}"
-                                                        data-name="{{ $supplier->name }}"
-                                                        data-phone="{{ $supplier->phone }}"
-                                                        data-email="{{ $supplier->email }}"
-                                                        data-address="{{ $supplier->address }}"
-                                                        data-description="{{ $supplier->description }}"
-                                                        data-taxcode="{{ $supplier->taxcode }}"
-                                                >
-                                                    <i class="fa fa-edit"></i>
-                                                </button>
-                                                <!-- Modal Sửa -->
-                                                <div class="modal fade" id="editSupplierModal" tabindex="-1" role="dialog" aria-hidden="true">
-                                                    <div class="modal-dialog" role="document">
-                                                        <div class="modal-content">
-                                                            <div class="modal-header border-0">
-                                                                <h5 class="modal-title">
-                                                                    <span class="fw-mediumbold">Chỉnh sửa</span>
-                                                                    <span class="fw-light"> {{$title}} </span>
-                                                                </h5>
-                                                                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                                                                    <span aria-hidden="true">&times;</span>
-                                                                </button>
-                                                            </div>
-                                                            <div class="modal-body">
-                                                                <form id="editSupplierForm">
-                                                                    @csrf
-                                                                    <input type="hidden" id="editSupplierId">
-
-                                                                    <div class="row">
-                                                                        <div class="col-sm-12">
-                                                                            <div class="form-group form-group-default">
-                                                                                <label>Tên nhà cung cấp</label>
-                                                                                <input id="editNameSupplier" name="name" type="text" class="form-control">
-                                                                            </div>
-                                                                        </div>
-                                                                        <div class="col-sm-12">
-                                                                            <div class="form-group form-group-default">
-                                                                                <label>Số điện thoại</label>
-                                                                                <input id="editPhoneSupplier" name="phone" type="text" class="form-control">
-                                                                            </div>
-                                                                        </div>
-                                                                        <div class="col-sm-12">
-                                                                            <div class="form-group form-group-default">
-                                                                                <label>Email</label>
-                                                                                <input id="editEmailSupplier" name="email" type="email" class="form-control">
-                                                                            </div>
-                                                                        </div>
-                                                                        <div class="col-sm-12">
-                                                                            <div class="form-group form-group-default">
-                                                                                <label>Địa chỉ</label>
-                                                                                <input id="editAddressSupplier" name="address" type="text" class="form-control">
-                                                                            </div>
-                                                                        </div>
-                                                                        <div class="col-md-12">
-                                                                            <div class="form-group form-group-default">
-                                                                                <label>Mô tả</label>
-                                                                                <textarea class="form-control" id="editDescription"></textarea>
-                                                                            </div>
-                                                                        </div>
-                                                                        <div class="col-sm-12">
-                                                                            <div class="form-group form-group-default">
-                                                                                <label>Mã số thuế</label>
-                                                                                <input id="editTaxcodeSupplier" name="taxcode" type="text" class="form-control">
-                                                                            </div>
-                                                                        </div>
+                                        @auth
+                                            @if(Auth::user()->role->name === 'Admin')
+                                                <td>
+                                                    <div class="form-button-action">
+                                                        <button type="button"
+                                                                class="btn btn-link btn-primary editSupplierBtn"
+                                                                data-id="{{ $supplier->id }}"
+                                                                data-name="{{ $supplier->name }}"
+                                                                data-phone="{{ $supplier->phone }}"
+                                                                data-email="{{ $supplier->email }}"
+                                                                data-address="{{ $supplier->address }}"
+                                                                data-description="{{ $supplier->description }}"
+                                                                data-taxcode="{{ $supplier->taxcode }}"
+                                                        >
+                                                            <i class="fa fa-edit"></i>
+                                                        </button>
+                                                        <!-- Modal Sửa -->
+                                                        <div class="modal fade" id="editSupplierModal" tabindex="-1"
+                                                             role="dialog" aria-hidden="true">
+                                                            <div class="modal-dialog" role="document">
+                                                                <div class="modal-content">
+                                                                    <div class="modal-header border-0">
+                                                                        <h5 class="modal-title">
+                                                                            <span class="fw-mediumbold">Chỉnh sửa</span>
+                                                                            <span class="fw-light"> {{$title}} </span>
+                                                                        </h5>
+                                                                        <button type="button" class="close"
+                                                                                data-bs-dismiss="modal"
+                                                                                aria-label="Close">
+                                                                            <span aria-hidden="true">&times;</span>
+                                                                        </button>
                                                                     </div>
+                                                                    <div class="modal-body">
+                                                                        <form id="editSupplierForm">
+                                                                            @csrf
+                                                                            <input type="hidden" id="editSupplierId">
 
-                                                                    <div class="modal-footer border-0">
-                                                                        <button type="button" id="updateSupplier" class="btn btn-primary">Cập nhật</button>
-                                                                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Đóng</button>
+                                                                            <div class="row">
+                                                                                <div class="col-sm-12">
+                                                                                    <div
+                                                                                        class="form-group form-group-default">
+                                                                                        <label>Tên nhà cung cấp</label>
+                                                                                        <input id="editNameSupplier"
+                                                                                               name="name"
+                                                                                               type="text"
+                                                                                               class="form-control">
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="col-sm-12">
+                                                                                    <div
+                                                                                        class="form-group form-group-default">
+                                                                                        <label>Số điện thoại</label>
+                                                                                        <input id="editPhoneSupplier"
+                                                                                               name="phone" type="text"
+                                                                                               class="form-control">
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="col-sm-12">
+                                                                                    <div
+                                                                                        class="form-group form-group-default">
+                                                                                        <label>Email</label>
+                                                                                        <input id="editEmailSupplier"
+                                                                                               name="email" type="email"
+                                                                                               class="form-control">
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="col-sm-12">
+                                                                                    <div
+                                                                                        class="form-group form-group-default">
+                                                                                        <label>Địa chỉ</label>
+                                                                                        <input id="editAddressSupplier"
+                                                                                               name="address"
+                                                                                               type="text"
+                                                                                               class="form-control">
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="col-md-12">
+                                                                                    <div
+                                                                                        class="form-group form-group-default">
+                                                                                        <label>Mô tả</label>
+                                                                                        <textarea class="form-control"
+                                                                                                  id="editDescription"></textarea>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="col-sm-12">
+                                                                                    <div
+                                                                                        class="form-group form-group-default">
+                                                                                        <label>Mã số thuế</label>
+                                                                                        <input id="editTaxcodeSupplier"
+                                                                                               name="taxcode"
+                                                                                               type="text"
+                                                                                               class="form-control">
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+
+                                                                            <div class="modal-footer border-0">
+                                                                                <button type="button"
+                                                                                        id="updateSupplier"
+                                                                                        class="btn btn-primary">Cập nhật
+                                                                                </button>
+                                                                                <button type="button"
+                                                                                        class="btn btn-danger"
+                                                                                        data-bs-dismiss="modal">Đóng
+                                                                                </button>
+                                                                            </div>
+                                                                        </form>
                                                                     </div>
-                                                                </form>
+                                                                </div>
                                                             </div>
                                                         </div>
-                                                    </div>
-                                                </div>
 
-                                                <button type="button" class="btn btn-link btn-danger deleteSupplier" data-id="{{ $supplier->id }}">
-                                                    <i class="fa fa-times"></i>
-                                                </button>
-                                            </div>
-                                        </td>
+                                                        <button type="button"
+                                                                class="btn btn-link btn-danger deleteSupplier"
+                                                                data-id="{{ $supplier->id }}">
+                                                            <i class="fa fa-times"></i>
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            @endif
+                                        @endauth
                                     </tr>
                                 @endforeach
                                 </tbody>
@@ -283,7 +336,7 @@
                                 message: response.message
                             }, {
                                 type: 'success',
-                                placement: { from: "top", align: "right" },
+                                placement: {from: "top", align: "right"},
                                 time: 1000
                             });
 
@@ -302,7 +355,7 @@
                             message: firstError
                         }, {
                             type: 'warning',
-                            placement: { from: "top", align: "right" },
+                            placement: {from: "top", align: "right"},
                             time: 1000
                         });
                     }
@@ -369,7 +422,7 @@
                             message: response.message
                         }, {
                             type: 'success',
-                            placement: { from: "top", align: "right" },
+                            placement: {from: "top", align: "right"},
                             time: 1000
                         });
 
@@ -383,7 +436,7 @@
                             message: response.message
                         }, {
                             type: 'danger',
-                            placement: { from: "top", align: "right" },
+                            placement: {from: "top", align: "right"},
                             time: 1000
                         });
                     }
@@ -396,7 +449,7 @@
                         message: errors ? errors[Object.keys(errors)[0]][0] : "Có lỗi xảy ra!"
                     }, {
                         type: 'warning',
-                        placement: { from: "top", align: "right" },
+                        placement: {from: "top", align: "right"},
                         time: 1000
                     });
                 }
@@ -424,7 +477,7 @@
                             message: response.message
                         }, {
                             type: response.status === "success" ? 'success' : 'danger',
-                            placement: { from: "top", align: "right" },
+                            placement: {from: "top", align: "right"},
                             time: 1000
                         });
 

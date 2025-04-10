@@ -6,11 +6,11 @@
             <div class="row">
                 <div class="col-lg-12 text-center">
                     <div class="breadcrumb__text">
-                        <h2>Vegetable’s Package</h2>
+                        <h2>Chi tiết sản phẩm</h2>
                         <div class="breadcrumb__option">
-                            <a href="./index.html">Home</a>
-                            <a href="./index.html">Vegetables</a>
-                            <span>Vegetable’s Package</span>
+                            <a href="./index.html">Trang chủ</a>
+                            <a href="./index.html">{{$product->category->name}}</a>
+                            <span>Sản phẩm</span>
                         </div>
                     </div>
                 </div>
@@ -41,12 +41,26 @@
                     <div class="product__details__text">
                         <h3>{{ $product->name }}</h3>
                         <div class="product__details__rating">
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star-half-o"></i>
-                            <span>(18 reviews)</span>
+                            @php
+                                $averageRating = round($product->reviews->avg('rating'), 1);
+                                    $fullStars = floor($averageRating);         // số sao đầy
+                                    $halfStar = ($averageRating - $fullStars) >= 0.5 ? 1 : 0; // nửa sao
+                                    $emptyStars = 5 - $fullStars - $halfStar;   // sao rỗng
+                            @endphp
+
+                            @for($i = 0; $i < $fullStars; $i++)
+                                <i class="fa fa-star"></i>
+                            @endfor
+
+                            @if($halfStar)
+                                <i class="fa fa-star-half-o"></i>
+                            @endif
+
+                            @for($i = 0; $i < $emptyStars; $i++)
+                                <i class="fa fa-star-o"></i>
+                            @endfor
+
+                            <span>({{ $product->reviews->count() }} đánh giá)</span>
                         </div>
                         <div class="product__details__price">{{ number_format($product->price, 0, ',', '.') }}đ</div>
                         <p>{{ $product->description }}</p>
@@ -57,7 +71,7 @@
                                 </div>
                             </div>
                         </div>
-                        <button class="btn primary-btn add-to-cart" data-id="{{ $product->id }}">THÊM VÀO GIỎ HÀNG</button>
+                        <button class="btn primary-btn add-to-cart" data-id="{{ $product->id }}" data-stock="{{ $product->stock }}">THÊM VÀO GIỎ HÀNG</button>
                         <a href="#" class="heart-icon"><span class="icon_heart_alt"></span></a>
                         <ul>
                             <li><b>Trạng thái</b> <span>{{ $product->stock > 0 ? 'Còn hàng' : 'Hết hàng' }}</span></li>
@@ -196,9 +210,17 @@
             $(".add-to-cart").on("click", function(e){
                 e.preventDefault();
                 var productId = $(this).data("id");
+                var stock = $(this).data("stock");
                 // Lấy số lượng từ ô nhập, nếu có. Nếu không có thì mặc định là 1.
                 var quantity = $(".pro-qty input").val() || 1;
-
+                if (stock == 0) {
+                    toastr["error"]("Sản phẩm đã hết hàng");
+                    return;
+                }
+                if (quantity > stock) {
+                    toastr["error"]("Số lượng đặt lớn hơn số lượng còn trong kho, vui lòng chọn số lượng nhỏ hơn " + stock);
+                    return;
+                }
                 $.ajax({
                     url: "{{ route('cart.add') }}",
                     type: "POST",

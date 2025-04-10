@@ -13,6 +13,8 @@
                     <div class="card-header">
                         <div class="d-flex align-items-center">
                             <h4 class="card-title">Quản lý {{$title}}</h4>
+                            @auth
+                                @if(Auth::user()->role->name === 'Admin')
                             <button
                                 class="btn btn-primary btn-round ms-auto"
                                 data-bs-toggle="modal"
@@ -21,6 +23,8 @@
                                 <i class="fa fa-plus"></i>
                                 Thêm mới
                             </button>
+                                @endif
+                            @endauth
 
                         </div>
                     </div>
@@ -103,7 +107,11 @@
                                     <th>Tên {{$title}}</th>
                                     <th>Người tạo</th>
                                     <th>Trạng thái</th>
-                                    <th style="width: 10%">Thao tác</th>
+                                    @auth
+                                        @if(Auth::user()->role->name === 'Admin')
+                                            <th style="width: 10%">Thao tác</th>
+                                        @endif
+                                    @endauth
                                 </tr>
                                 </thead>
                                 <tfoot>
@@ -112,7 +120,11 @@
                                     <th>Tên {{$title}}</th>
                                     <th>Người tạo</th>
                                     <th>Trạng thái</th>
-                                    <th style="width: 10%">Thao tác</th>
+                                    @auth
+                                        @if(Auth::user()->role->name === 'Admin')
+                                            <th style="width: 10%">Thao tác</th>
+                                        @endif
+                                    @endauth
                                 </tr>
                                 </tfoot>
                                 <tbody>
@@ -122,74 +134,98 @@
                                     <td> {{$i}}</td>
                                     <td>{{$category->name}}</td>
                                     <td> {{ $category->user ? $category->user->name : 'Không xác định' }}</td>
-                                    <td>@if($category->status == 1) Hoạt động @else Không hoạt động @endif</td>
                                     <td>
-                                        <div class="form-button-action">
-                                            <button type="button"
-                                                    class="btn btn-link btn-primary btn-lg editCategoryBtn"
-                                                    data-id="{{ $category->id }}"
-                                                    data-name="{{ $category->name }}"
-                                                    data-description="{{ $category->description }}"
-                                                    data-status="{{ $category->status }}"
-                                                    data-bs-toggle="modal"
-                                                    data-bs-target="#editCategoryModal"
-                                            >
-                                                <i class="fa fa-edit"></i>
-                                            </button>
-                                            <!-- Modal Sửa -->
-                                            <div class="modal fade" id="editCategoryModal" tabindex="-1" role="dialog" aria-hidden="true">
-                                                <div class="modal-dialog" role="document">
-                                                    <div class="modal-content">
-                                                        <div class="modal-header border-0">
-                                                            <h5 class="modal-title">
-                                                                <span class="fw-mediumbold">Chỉnh sửa</span>
-                                                                <span class="fw-light"> {{$title}} </span>
-                                                            </h5>
-                                                            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                                                                <span aria-hidden="true">&times;</span>
-                                                            </button>
-                                                        </div>
-                                                        <div class="modal-body">
-                                                            <form id="editCategoryForm">
-                                                                @csrf
-                                                                <input type="hidden" id="editCategoryId">
-                                                                <div class="row">
-                                                                    <div class="col-sm-12">
-                                                                        <div class="form-group form-group-default">
-                                                                            <label>Tên {{$title}}</label>
-                                                                            <input id="editNameCategory" name="name" type="text" class="form-control">
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="col-md-12">
-                                                                        <div class="form-group form-group-default">
-                                                                            <label>Mô tả</label>
-                                                                            <textarea class="form-control" id="editDescription"></textarea>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="col-md-12">
-                                                                        <div class="form-group form-group-default">
-                                                                            <label>Trạng thái</label>
-                                                                            <div class="form-check form-switch">
-                                                                                <input class="form-check-input" type="checkbox" id="editStatusCategory">
+                                        <span class="badge {{ $category->status == 1 ? 'bg-success' : 'bg-secondary' }}">
+                                            {{ $category->status == 1 ? 'Hoạt động' : 'Không hoạt động' }}
+                                        </span>
+                                    </td>
+
+                                @auth
+                                        @if(Auth::user()->role->name === 'Admin')
+                                            <td>
+                                                <div class="form-button-action">
+                                                    <button type="button"
+                                                            class="btn btn-link btn-primary btn-lg editCategoryBtn"
+                                                            data-id="{{ $category->id }}"
+                                                            data-name="{{ $category->name }}"
+                                                            data-description="{{ $category->description }}"
+                                                            data-status="{{ $category->status }}"
+                                                            data-bs-toggle="modal"
+                                                            data-bs-target="#editCategoryModal"
+                                                    >
+                                                        <i class="fa fa-edit"></i>
+                                                    </button>
+                                                    <!-- Modal Sửa -->
+                                                    <div class="modal fade" id="editCategoryModal" tabindex="-1"
+                                                         role="dialog" aria-hidden="true">
+                                                        <div class="modal-dialog" role="document">
+                                                            <div class="modal-content">
+                                                                <div class="modal-header border-0">
+                                                                    <h5 class="modal-title">
+                                                                        <span class="fw-mediumbold">Chỉnh sửa</span>
+                                                                        <span class="fw-light"> {{$title}} </span>
+                                                                    </h5>
+                                                                    <button type="button" class="close"
+                                                                            data-bs-dismiss="modal" aria-label="Close">
+                                                                        <span aria-hidden="true">&times;</span>
+                                                                    </button>
+                                                                </div>
+                                                                <div class="modal-body">
+                                                                    <form id="editCategoryForm">
+                                                                        @csrf
+                                                                        <input type="hidden" id="editCategoryId">
+                                                                        <div class="row">
+                                                                            <div class="col-sm-12">
+                                                                                <div
+                                                                                    class="form-group form-group-default">
+                                                                                    <label>Tên {{$title}}</label>
+                                                                                    <input id="editNameCategory"
+                                                                                           name="name" type="text"
+                                                                                           class="form-control">
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-md-12">
+                                                                                <div
+                                                                                    class="form-group form-group-default">
+                                                                                    <label>Mô tả</label>
+                                                                                    <textarea class="form-control"
+                                                                                              id="editDescription"></textarea>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-md-12">
+                                                                                <div
+                                                                                    class="form-group form-group-default">
+                                                                                    <label>Trạng thái</label>
+                                                                                    <div class="form-check form-switch">
+                                                                                        <input class="form-check-input"
+                                                                                               type="checkbox"
+                                                                                               id="editStatusCategory">
+                                                                                    </div>
+                                                                                </div>
                                                                             </div>
                                                                         </div>
-                                                                    </div>
+                                                                        <div class="modal-footer border-0">
+                                                                            <button type="button" id="updateCategory"
+                                                                                    class="btn btn-primary">Cập nhật
+                                                                            </button>
+                                                                            <button type="button" class="btn btn-danger"
+                                                                                    data-bs-dismiss="modal">Đóng
+                                                                            </button>
+                                                                        </div>
+                                                                    </form>
                                                                 </div>
-                                                                <div class="modal-footer border-0">
-                                                                    <button type="button" id="updateCategory" class="btn btn-primary">Cập nhật</button>
-                                                                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Đóng</button>
-                                                                </div>
-                                                            </form>
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                </div>
-                                            </div>
 
-                                            <button type="button" class="btn btn-link btn-danger deleteCategory" data-id="{{ $category->id }}">
-                                                <i class="fa fa-times"></i>
-                                            </button>
-                                        </div>
-                                    </td>
+                                                    <button type="button" class="btn btn-link btn-danger deleteCategory"
+                                                            data-id="{{ $category->id }}">
+                                                        <i class="fa fa-times"></i>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        @endif
+                                    @endauth
                                 </tr>
                                 @endforeach
                                 </tbody>

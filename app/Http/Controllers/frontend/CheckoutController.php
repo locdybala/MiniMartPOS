@@ -32,7 +32,7 @@ class CheckoutController extends Controller
                 $discount = $coupon['coupon_number']; // giảm tiền
             }
         }
-        if ($subtotal > 1000000) {
+        if ($subtotal > 1000000 || Auth::guard('customer')->user()->customer_group_id) {
             $fee = 0;
         } else {
             $fee = 20000;

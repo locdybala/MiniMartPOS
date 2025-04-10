@@ -23,8 +23,8 @@ class Customer extends Authenticatable implements CanResetPasswordContract
         return $this->hasMany(Order::class);
     }
 
-    public function group()
+    public function customerGroup()
     {
-        return $this->belongsTo(CustomerGroup::class, 'customer_group_id');
+        return $this->belongsTo(CustomerGroup::class);
     }
 }

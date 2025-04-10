@@ -28,7 +28,7 @@
         <div class="sidebar-content">
             <ul class="nav nav-secondary">
                 <li class="nav-item">
-                    <a  href="{{route('dashboard')}}">
+                    <a href="{{route('dashboard')}}">
                         <i class="fas fa-home"></i>
                         <p>Trang chủ</p>
                     </a>
@@ -70,48 +70,52 @@
                         </ul>
                     </div>
                 </li>
-                <li class="nav-item">
-                    <a data-bs-toggle="collapse" href="#sidebarLayouts">
-                        <i class="fas fa-user"></i>
-                        <p>Khách hàng</p>
-                        <span class="caret"></span>
-                    </a>
-                    <div class="collapse" id="sidebarLayouts">
-                        <ul class="nav nav-collapse">
-                            <li>
-                                <a href="{{route('customer_groups.index')}}">
-                                    <span class="sub-item">Nhóm khách hàng</span>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="{{route('customer.index')}}">
-                                    <span class="sub-item">Khách hàng</span>
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-                </li>
-                <li class="nav-item">
-                    <a data-bs-toggle="collapse" href="#forms">
-                        <i class="fas fa-pen-square"></i>
-                        <p>Bán lẻ online</p>
-                        <span class="caret"></span>
-                    </a>
-                    <div class="collapse" id="forms">
-                        <ul class="nav nav-collapse">
-                            <li>
-                                <a href="{{route('orders.create')}}">
-                                    <span class="sub-item">Bán hàng</span>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="{{route('orders.index')}}">
-                                    <span class="sub-item">Hoá đơn</span>
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-                </li>
+                @auth
+                    @if(Auth::user()->role->name === 'Admin' || Auth::user()->role->id === 2)
+                        <li class="nav-item">
+                            <a data-bs-toggle="collapse" href="#sidebarLayouts">
+                                <i class="fas fa-user"></i>
+                                <p>Khách hàng</p>
+                                <span class="caret"></span>
+                            </a>
+                            <div class="collapse" id="sidebarLayouts">
+                                <ul class="nav nav-collapse">
+                                    <li>
+                                        <a href="{{route('customer_groups.index')}}">
+                                            <span class="sub-item">Nhóm khách hàng</span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="{{route('customer.index')}}">
+                                            <span class="sub-item">Khách hàng</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+                        <li class="nav-item">
+                            <a data-bs-toggle="collapse" href="#forms">
+                                <i class="fas fa-pen-square"></i>
+                                <p>Bán lẻ online</p>
+                                <span class="caret"></span>
+                            </a>
+                            <div class="collapse" id="forms">
+                                <ul class="nav nav-collapse">
+                                    <li>
+                                        <a href="{{route('orders.create')}}">
+                                            <span class="sub-item">Bán hàng</span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="{{route('orders.index')}}">
+                                            <span class="sub-item">Hoá đơn</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+                    @endif
+                @endauth
                 <li class="nav-item">
                     <a data-bs-toggle="collapse" href="#tables">
                         <i class="fas fa-table"></i>
@@ -133,22 +137,28 @@
                         </ul>
                     </div>
                 </li>
-                <li class="nav-item">
-                    <a  href="{{route('posts.index')}}">
-                        <i class="fas fa-book"></i>
-                        <p>Quản lý bài viết</p>
+                @auth
+                    @if(Auth::user()->role->name === 'Admin' || Auth::user()->role->id === 2)
+                        <li class="nav-item">
+                            <a href="{{route('posts.index')}}">
+                                <i class="fas fa-book"></i>
+                                <p>Quản lý bài viết</p>
 
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a  href="{{route('coupons.index')}}">
-                        <i class="fas fa-couch"></i>
-                        <p>Quản lý mã giảm giá</p>
+                            </a>
+                        </li>
 
-                    </a>
-                </li>
+
+                        <li class="nav-item">
+                            <a href="{{route('coupons.index')}}">
+                                <i class="fas fa-couch"></i>
+                                <p>Quản lý mã giảm giá</p>
+
+                            </a>
+                        </li>
+                    @endif
+                @endauth
                 <li class="nav-item">
-                    <a  href="{{route('users.index')}}">
+                    <a href="{{route('users.index')}}">
                         <i class="fas fa-user"></i>
                         <p>Quản lý tài khoản</p>
 
