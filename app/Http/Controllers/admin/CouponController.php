@@ -100,15 +100,17 @@ class CouponController extends Controller
 
         // Lọc khách hàng theo đối tượng
         $customers = match ($target) {
-            'vip' => Customer::whereHas('customerGroup', function ($q) {
-                $q->where('name', 'VIP');
-            })->get(),
+            'vip' => Customer::where('id', '!=', 1)
+                ->whereHas('customerGroup', function ($q) {
+                    $q->where('name', 'VIP');
+                })->get(),
 
-            'normal' => Customer::whereHas('customerGroup', function ($q) {
-                $q->where('name', 'Khách thường');
-            })->get(),
+            'normal' => Customer::where('id', '!=', 1)
+                ->whereHas('customerGroup', function ($q) {
+                    $q->where('name', 'Khách thường');
+                })->get(),
 
-            default => Customer::all(),
+            default => Customer::where('id', '!=', 1)->get(),
         };
         foreach ($customers as $customer) {
             Mail::send('admin.mails.send-coupon', [
