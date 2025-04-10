@@ -7,6 +7,7 @@ use App\Models\CustomerGroup;
 use App\Models\Order;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class CustomerController extends Controller
 {
@@ -26,11 +27,13 @@ class CustomerController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'nullable|email|unique:customer,email',
+            'email' => 'nullable|email|unique:customers,email',
             'phone' => 'nullable|string|max:20',
         ]);
+        $data = $request->only(['name', 'email', 'phone']);
+        $data['password'] = Hash::make('123456'); // default password
 
-        Customer::create($request->all());
+        Customer::create($data);
 
         return redirect()->route('customer.index')->with('success', 'Khách hàng đã được thêm!');
     }
