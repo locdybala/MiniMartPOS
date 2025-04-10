@@ -29,6 +29,7 @@ class ImportOrderController extends Controller
     // Lưu phiếu nhập hàng vào database
     public function store(Request $request)
     {
+        // Hàm thêm phiếu nhập
         $request->validate([
             'supplier_id' => 'required|exists:suppliers,id',
             'import_date' => 'required|date',
@@ -39,6 +40,7 @@ class ImportOrderController extends Controller
         ]);
 
         DB::transaction(function () use ($request) {
+            // Thêm phiếu nhập vào bảng import order
             $importOrder = ImportOrder::create([
                 'supplier_id' => $request->supplier_id,
                 'import_date' => $request->import_date,
@@ -46,6 +48,7 @@ class ImportOrderController extends Controller
             ]);
 
             foreach ($request->products as $product) {
+                // Lưu thông tin sản phẩm vào chi tiết phiếu nhập
                 ImportOrderDetail::create([
                     'import_order_id' => $importOrder->id,
                     'product_id' => $product['product_id'],

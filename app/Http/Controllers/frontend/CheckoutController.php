@@ -48,6 +48,7 @@ class CheckoutController extends Controller
         ]);
     }
 
+    // Code lưu thông tin đơn hàng và thanh toán
     public function process(Request $request)
     {
         // Kiểm tra nếu giỏ hàng trống
@@ -109,6 +110,7 @@ class CheckoutController extends Controller
             // Chuyển hướng về trang cảm ơn sau khi hoàn thành đơn hàng
             return redirect()->route('checkout.success')->with('success', 'Đặt hàng thành công!');
         } elseif ($data['payment_method'] == 'online_payment') {
+            // Thanh toán vnpay
             $data_url = $this->paymentVnpay([
                 'vnp_TxnRef' => $order->id,
                 'vnp_Amount' => $total,
@@ -121,6 +123,7 @@ class CheckoutController extends Controller
 
     public function paymentVnpay($data)
     {
+        // Hàm thanh toán vnpay call api sang vnpay và tiến hành thanh toán
         $vnp_TmnCode = 'A8CVX1L2'; //Mã website tại VNPAY
         $vnp_HashSecret = "HJBPUUOGUYQBPUYZWBXEOTAQIBVOXUSB"; //Chuỗi bí mật
         $vnp_Url = "http://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
