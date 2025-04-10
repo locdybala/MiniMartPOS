@@ -56,26 +56,33 @@
                             <td>
                                 @switch($order->status)
                                     @case('pending')
-                                        <span class="badge badge-warning">Chờ xử lý</span>
+                                        <span class="badge bg-warning">🕒 Chờ xử lý</span>
                                         @break
+
                                     @case('identify')
-                                        <span class="badge badge-info">Xác minh</span>
+                                        <span class="badge bg-info">✅ Đã xác nhận</span>
                                         @break
+
                                     @case('processing')
-                                        <span class="badge badge-primary">Đang xử lý</span>
+                                        <span class="badge bg-primary">🔄 Đang xử lý</span>
                                         @break
+
                                     @case('shipping')
-                                        <span class="badge badge-primary">Đang giao hàng</span>
+                                        <span class="badge bg-secondary">🚚 Đang vận chuyển</span>
                                         @break
+
                                     @case('completed')
-                                        <span class="badge badge-success">Hoàn thành</span>
+                                        <span class="badge bg-success">✅ Hoàn thành</span>
                                         @break
+
                                     @case('cancelled')
-                                        <span class="badge badge-danger">Đã hủy</span>
+                                        <span class="badge bg-danger">❌ Đã hủy</span>
                                         @break
+
                                     @default
-                                        <span class="badge badge-secondary">Không rõ</span>
+                                        <span class="badge bg-dark">❓ Không rõ</span>
                                 @endswitch
+
                             </td>
                             <td>
                                 <a href="{{ route('frontend.orders.show', $order->id) }}" class="btn btn-sm btn-info">Chi tiết</a>
