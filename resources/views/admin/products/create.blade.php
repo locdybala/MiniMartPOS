@@ -63,7 +63,7 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label>Số lượng tồn kho</label>
-                                        <input type="number" name="stock" class="form-control" value="{{ $product->stock ?? '' }}" required>
+                                        <input type="number" name="stock" class="form-control" value="{{ $product->stock ?? '0' }}" readonly required>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
