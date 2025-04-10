@@ -49,13 +49,17 @@
                                                 @endforeach
                                             </select>
                                         </div>
-                                        <div class="col-md-3">
+                                        <div class="col-md-2">
                                             <label class="form-label">Số lượng</label>
                                             <input type="number" name="products[{{ $index }}][quantity]" class="form-control" value="{{ $detail->quantity }}" required>
                                         </div>
-                                        <div class="col-md-3">
+                                        <div class="col-md-2">
                                             <label class="form-label">Đơn giá</label>
-                                            <input type="number" name="products[{{ $index }}][unit_price]" class="form-control" value="{{ $detail->price }}" required>
+                                            <input type="number" name="products[{{ $index }}][unit_price]" class="form-control" value="{{ number_format($detail->unit_price, 0, '', '') }}" required>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <label class="form-label">Thành tiền</label>
+                                            <input type="text" name="products[{{ $index }}][total_price]" class="form-control total-price" value="0" readonly>
                                         </div>
                                         <div class="col-md-2 d-flex align-items-end">
                                             <button type="button" class="btn btn-danger remove-product">X</button>
@@ -72,20 +76,27 @@
                                             @endforeach
                                         </select>
                                     </div>
-                                    <div class="col-md-3">
+                                    <div class="col-md-2">
                                         <label class="form-label">Số lượng</label>
                                         <input type="number" name="products[0][quantity]" class="form-control" required>
                                     </div>
-                                    <div class="col-md-3">
+                                    <div class="col-md-2">
                                         <label class="form-label">Đơn giá</label>
                                         <input type="number" name="products[0][unit_price]" class="form-control unit-price" required>
                                         <small class="text-danger price-warning"></small>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <label class="form-label">Thành tiền</label>
+                                        <input type="text" name="products[0][total_price]" class="form-control total-price" value="0" readonly>
                                     </div>
                                     <div class="col-md-2 d-flex align-items-end">
                                         <button type="button" class="btn btn-danger remove-product">X</button>
                                     </div>
                                 </div>
                             @endif
+                        </div>
+                        <div class="text-end mt-3">
+                            <h5 class="fw-bold">Tổng tiền: <span id="grand-total">0 VNĐ</span></h5>
                         </div>
                         <div class="card-footer">
                             <button type="button" id="add-product" class="btn btn-primary">Thêm sản phẩm</button>
@@ -143,6 +154,35 @@
                 }
             });
         });
+
+        function updateTotals() {
+            let grandTotal = 0;
+
+            $(".product-row").each(function () {
+                let quantity = parseInt($(this).find("input[name*='[quantity]']").val()) || 0;
+                let unitPrice = parseFloat($(this).find("input[name*='[unit_price]']").val()) || 0;
+
+                let total = quantity * unitPrice;
+                $(this).find(".total-price").val(total.toLocaleString() + " VNĐ");
+
+                grandTotal += total;
+            });
+
+            $("#grand-total").text(grandTotal.toLocaleString() + " VNĐ");
+        }
+
+        // Gọi lại khi có thay đổi
+        $(document).on("input", "input[name*='[quantity]'], input[name*='[unit_price]']", function () {
+            updateTotals();
+        });
+
+        // Gọi lại sau khi thêm dòng mới
+        $("#add-product").click(function () {
+            setTimeout(updateTotals, 100);
+        });
+
+        // Gọi lại ban đầu
+        updateTotals();
     </script>
 
 @endsection
