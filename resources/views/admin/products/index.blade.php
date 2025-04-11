@@ -65,7 +65,8 @@
                                         <td> {{$i}}</td>
                                         <td>
                                             @if($product->images->isNotEmpty())
-                                                <img src="{{ asset('storage/'.$product->images->first()->image_path) }}" width="50">
+                                                <img src="{{ asset('storage/'.$product->images->first()->image_path) }}"
+                                                     width="50">
                                             @else
                                                 <img src="{{ asset('no-image.png') }}" width="50">
                                             @endif
@@ -79,13 +80,16 @@
                                         <td>
                                             @auth
                                                 @if(Auth::user()->role->name === 'Admin')
-                                            <div class="form-button-action">
-                                                <a href="{{ route('products.edit', $product) }}" class="btn btn-link btn-primary btn-lg"><i class="fa fa-edit"></i></a>
-                                                <form action="{{ route('products.destroy', $product) }}" method="POST" style="display:inline;">
-                                                    @csrf @method('DELETE')
-                                                    <button type="submit" class="btn btn-link btn-danger deleteProduct" data-id="{{ $product->id }}"><i class="fa fa-times"></i></button>
-                                                </form>
-                                            </div>
+                                                    <div class="form-button-action">
+                                                        <a href="{{ route('products.edit', $product) }}"
+                                                           class="btn btn-link btn-primary btn-lg"><i
+                                                                class="fa fa-edit"></i></a>
+                                                        <button type="button" class="btn btn-link btn-danger deleteProduct"
+                                                                data-id="{{ $product->id }}">
+                                                            <i class="fa fa-times"></i>
+                                                        </button>
+                                                        </form>
+                                                    </div>
                                                 @endif
                                             @endauth
                                         </td>
@@ -244,6 +248,7 @@
 
         //Xoá
         $(document).on("click", ".deleteProduct", function (e) {
+            debugger
             e.preventDefault();
 
             let productId = $(this).data("id");
@@ -253,7 +258,7 @@
                     url: "/admin/products/" + productId,  // Sửa URL
                     type: "DELETE",
                     data: {
-                        _token: $("meta[name='csrf-token']").attr("content"),  // Lấy CSRF từ thẻ meta
+                        _token: $("input[name=_token]").val(),
                     },
                     success: function (response) {
                         $.notify({
@@ -262,7 +267,7 @@
                             message: response.message
                         }, {
                             type: 'success',
-                            placement: { from: "top", align: "right" },
+                            placement: {from: "top", align: "right"},
                             time: 1000
                         });
 
